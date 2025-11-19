@@ -27,6 +27,11 @@ public class AlumnoController {
           return "AlumnoIndex"; // -> Busca una vista que se llame Index
     }
     
+    @GetMapping("form")
+    public String Form(){
+        return "AlumnoForm";
+    }
+    
     
     
 }

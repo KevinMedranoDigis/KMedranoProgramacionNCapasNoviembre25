@@ -10,6 +10,11 @@
     </head>
     <body class="container">
         <div>
+            
+            <br/>
+            <br/>
+            <a th:href="@{/alumno/form}" class="btn btn-success">New user</a>
+            
             <table class="table table-hover table-striped">
                 <tr class="table-dark">
                     <th class="col-1">Accion</th>
@@ -26,10 +31,13 @@
                     <td th:text="|${alumno.Nombre} ${alumno.ApellidoPaterno}|"> </td>
                     <td>@Username <br/>correo@mail.com </td>
                     <td>
-                        <ul>
-                            <li>Dirección 1</li>
-                            <li>Dirección 2</li>
+                        <ul th:if="${alumno.Direcciones != null}">
+                            <li th:each="direccion : ${alumno.Direcciones}" th:text="|${direccion.Calle} ${direccion.NumeroInterior}|">Dirección 1</li>
                         </ul>
+                        <ul th:unless="${alumno.Direcciones != null}">
+                            <li>Sin dirección.</li>
+                        </ul>
+                        <!--<span th:if="${alumno.Direcciones == null}">Sin dirección.</span>-->
                     </td>
                 </tr>
 

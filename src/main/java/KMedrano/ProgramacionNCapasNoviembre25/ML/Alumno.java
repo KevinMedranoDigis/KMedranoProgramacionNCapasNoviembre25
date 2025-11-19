@@ -11,7 +11,7 @@ public class Alumno {
     private String ApellidoMaterno;
     private String Email;
     private String Password;
-    //public List<Direccion> Direcciones;
+    public List<Direccion> Direcciones;
 
     public int getIdAlumno() {
         return IdAlumno;
