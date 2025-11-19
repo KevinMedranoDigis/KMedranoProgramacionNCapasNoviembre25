@@ -9,23 +9,22 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
-@Controller
+@Controller // sirve para mapear interacciones del usuario 
 @RequestMapping("alumno")
-public class Alumno {
+public class AlumnoController {
     
-    @Autowired
-    private AlumnoDAOIMplementation alumnoDaoImplementation;
-    
-    
-    
-    @GetMapping
+    @Autowired // Inyección de dependencias (field injection)
+    private AlumnoDAOIMplementation alumnoDAOImplementation;
+
+
+    @GetMapping // responder a interacciones de usuario
     public String GetAll(Model model){
         
-     Result result =  alumnoDaoImplementation.GetAll();
-     
-     model.addAttribute("Alumnos", result.Objects);
+          Result result =  alumnoDAOImplementation.GetAll();
+          //model -> me permite cargar información desde el backend en la parte del front
+          model.addAttribute("Alumnos", result.Objects);
         
-        return "Index";
+          return "AlumnoIndex"; // -> Busca una vista que se llame Index
     }
     
     

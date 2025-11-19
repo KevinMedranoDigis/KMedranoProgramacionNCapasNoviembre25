@@ -9,11 +9,11 @@ import org.springframework.jdbc.core.CallableStatementCallback;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
-@Repository
+@Repository // Lógica de base de datos
 public class AlumnoDAOIMplementation implements IAlumno {
 
     @Autowired //Permite la inyeccion de dependencias
-    private JdbcTemplate jdbcTemplate;
+    private JdbcTemplate jdbcTemplate; // context
 
     @Override
     public Result GetAll() {
@@ -21,7 +21,7 @@ public class AlumnoDAOIMplementation implements IAlumno {
         Result result = new Result();
 
         try {
-
+            // -> función anonima, función autoinvocada, arrow function, lambda function
          result.Correct  =   jdbcTemplate.execute("{CALL AlumnoDireccionGetAll(?)}", (CallableStatementCallback<Boolean>) callableStatement -> {
 
                 callableStatement.registerOutParameter(1, java.sql.Types.REF_CURSOR);
