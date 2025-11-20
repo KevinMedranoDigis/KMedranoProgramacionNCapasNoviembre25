@@ -11,7 +11,9 @@ public class Alumno {
     private String ApellidoMaterno;
     private String Email;
     private String Password;
+    public Semestre Semestre;
     public List<Direccion> Direcciones;
+    
 
     public int getIdAlumno() {
         return IdAlumno;
@@ -60,11 +62,12 @@ public class Alumno {
     public void setPassword(String Password) {
         this.Password = Password;
     }
-    
-    
-    
-    
-    
-    
-    
+
+    public Semestre getSemestre() {
+        return Semestre;
+    }
+
+    public void setSemestre(Semestre Semestre) {
+        this.Semestre = Semestre;
+    }
 }

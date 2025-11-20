@@ -10,4 +10,6 @@ public interface IAlumno {
     
     public Result GetAll();
     
+    //crear mi firma de metodo (Add)
+    
 }
