@@ -79,6 +79,37 @@ public class AlumnoDAOIMplementation implements IAlumno {
         return result;
 
     }
-    
-    
+
+    @Override
+    public Result Add(Alumno alumno) {
+        Result result = new Result();
+
+        try {
+
+            result.Correct = jdbcTemplate.execute("{CALL AlumnoDireccionAdd(?,?,?,?,?,?,?,?,?)}", (CallableStatementCallback<Boolean>) callableStatement -> {
+
+                callableStatement.setString(1, alumno.getNombre());
+                callableStatement.setString(2, alumno.getApellidoPaterno());
+                callableStatement.setString(3, alumno.getApellidoMaterno());
+                callableStatement.setString(4, alumno.getEmail());
+                callableStatement.setString(5, alumno.getPassword());
+                callableStatement.setString(6, alumno.Direcciones.get(0).getCalle());
+                callableStatement.setString(7, alumno.Direcciones.get(0).getNumeroInterior());
+                callableStatement.setString(8, alumno.Direcciones.get(0).getNumeroExterior());
+                callableStatement.setInt(9, alumno.Direcciones.get(0).Colonia.getIdColonia());
+                
+                callableStatement.executeUpdate();
+                
+                return true;
+            });
+
+        } catch (Exception ex) {
+            result.Correct = false;
+            result.ErrorMessage = ex.getLocalizedMessage();
+            result.ex = ex;
+        }
+
+        return result;
+    }
+
 }
