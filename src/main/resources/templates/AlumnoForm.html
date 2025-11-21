@@ -60,7 +60,11 @@
                             </div>
                             <div class="row">
                                 <label for="semestreAlumno" class="form-label fw-bold">Semestre</label>
-                                <input id="semestreAlumno" type="text" class="form-control" placeholder="Semestre"  th:field="*{Semestre.IdSemestre}">
+                                <!--                                <input id="semestreAlumno" type="text" class="form-control" placeholder="Semestre"  th:field="*{Semestre.IdSemestre}">-->
+                                <select class="form-control">
+                                    <option value=0> Selecciona un Semestre</option>
+                                    <option th:each=" semestre : ${Semestres}" th:text="${semestre.Nombre}" th:value="${semestre.IdSemestre}"></option>
+                                </select>
                             </div>
                         </div>
                     </div>

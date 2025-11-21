@@ -2,6 +2,7 @@
 package KMedrano.ProgramacionNCapasNoviembre25.Controller;
 
 import KMedrano.ProgramacionNCapasNoviembre25.DAO.AlumnoDAOIMplementation;
+import KMedrano.ProgramacionNCapasNoviembre25.DAO.SemestreDAOImplementation;
 import KMedrano.ProgramacionNCapasNoviembre25.ML.Alumno;
 import KMedrano.ProgramacionNCapasNoviembre25.ML.Result;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,6 +10,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
@@ -19,7 +21,9 @@ public class AlumnoController {
     @Autowired // Inyección de dependencias (field injection)
     private AlumnoDAOIMplementation alumnoDAOImplementation;
 
-
+    @Autowired
+    private SemestreDAOImplementation semestreDAOImplementation;
+            
     @GetMapping // responder a interacciones de usuario
     public String GetAll(Model model){
         
@@ -33,7 +37,10 @@ public class AlumnoController {
     @GetMapping("form")
     public String Form(Model model){
         
+        Result result = semestreDAOImplementation.GetAll();
+        model.addAttribute("Semestres", result.Objects);
         model.addAttribute("Alumno", new Alumno());
+        
         
         return "AlumnoForm";
     }
@@ -47,6 +54,15 @@ public class AlumnoController {
         
         return "AlumnoIndex";
     }
+    
+    @GetMapping("detail/{IdAlumno}")
+    public String Detail(@PathVariable("IdAlumno") int IdAlumno){
+        
+        //consulta de un usuario con sus direcciones
+        
+        return "AlumnoDetail";
+    }
+    
     
     
 }
