@@ -7,6 +7,15 @@
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
 
+        <style>
+            .error {
+                border-color: red;
+            }
+            .correct{
+                border-color: green;
+            }
+            
+        </style>
 
     </head>
     <body >
@@ -26,7 +35,8 @@
                         <div class="card p-3 h-100">
                             <div class="mb-3">
                                 <label for="NombreAlumno" class="form-label fw-bold">Nombre</label>
-                                <input  type="text" class="form-control" placeholder="Nombre" id="NombreAlumno" th:field="*{Nombre}">                           
+                                <input  type="text" class="form-control" placeholder="Nombre" id="NombreAlumno" th:field="*{Nombre}" onkeypress="SoloLetras(event, this)">             
+                                <span class="text-danger error-msg"></span>
                             </div>
                             <div class="row">
                                 <div class="col mb-3">
@@ -135,6 +145,29 @@
             </form>
 
         </div>
+        
+        <script src="https://code.jquery.com/jquery-3.7.1.js" integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4=" crossorigin="anonymous"></script>
+    <script>
+        
+        function SoloLetras(event, input){
+            
+            let key = event.key;
+            
+            let RegExp = /[a-zA-Z]+/ ;
+            
+            if(RegExp.test(key)){
+                $(input).removeClass("error").addClass("correct");
+               
+            }else{ //siblings = hermanos
+                $(input).removeClass("correct").addClass("error");
+                 $(input).siblings(".error-msg").text("No se permiten numeros");
+                event.preventDefault(); //No ingresar valor en el input
+            }
+            
+        }
+    
+    
+    </script>
     </body>
 
 
