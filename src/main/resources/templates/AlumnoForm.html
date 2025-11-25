@@ -14,7 +14,7 @@
             .correct{
                 border-color: green;
             }
-            
+
         </style>
 
     </head>
@@ -35,7 +35,8 @@
                         <div class="card p-3 h-100">
                             <div class="mb-3">
                                 <label for="NombreAlumno" class="form-label fw-bold">Nombre</label>
-                                <input  type="text" class="form-control" placeholder="Nombre" id="NombreAlumno" th:field="*{Nombre}" onkeypress="SoloLetras(event, this)">             
+                                <input  type="text" class="form-control" placeholder="Nombre" id="NombreAlumno" th:field="*{Nombre}" onkeypress="SoloLetras(event, this)">  
+                                <span class="text-danger" th:if="${#fields.hasErrors('Nombre')}" th:errors="${Alumno.Nombre}" ></span>
                                 <span class="text-danger error-msg"></span>
                             </div>
                             <div class="row">
@@ -145,29 +146,36 @@
             </form>
 
         </div>
-        
+
         <script src="https://code.jquery.com/jquery-3.7.1.js" integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4=" crossorigin="anonymous"></script>
-    <script>
-        
-        function SoloLetras(event, input){
-            
-            let key = event.key;
-            
-            let RegExp = /[a-zA-Z]+/ ;
-            
-            if(RegExp.test(key)){
-                $(input).removeClass("error").addClass("correct");
-               
-            }else{ //siblings = hermanos
-                $(input).removeClass("correct").addClass("error");
-                 $(input).siblings(".error-msg").text("No se permiten numeros");
-                event.preventDefault(); //No ingresar valor en el input
-            }
-            
-        }
-    
-    
-    </script>
+        <script>
+
+                                        function SoloLetras(event, input) {
+
+                                            let key = event.key;
+                                            let asci = event.keyCode;
+
+                                            let RegExp = /[a-zA-Z]+/;
+
+                                            if (RegExp.test(key)) {
+
+                                                if (asci >= 64 && asci <= 90 || asci >= 97 && asci <= 122) {
+                                                    $(input).removeClass("error").addClass("correct");
+                                                } else {
+                                                    $(input).removeClass("correct").addClass("error");
+                                                    $(input).siblings(".error-msg").text("No se permiten numeros");
+                                                    event.preventDefault();
+                                                }
+                                            } else { //siblings = hermanos
+                                                $(input).removeClass("correct").addClass("error");
+                                                $(input).siblings(".error-msg").text("No se permiten numeros");
+                                                event.preventDefault(); //No ingresar valor en el input
+                                            }
+
+                                        }
+
+
+        </script>
     </body>
 
 

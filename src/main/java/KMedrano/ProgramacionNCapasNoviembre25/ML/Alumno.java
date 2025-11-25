@@ -1,14 +1,26 @@
 
 package KMedrano.ProgramacionNCapasNoviembre25.ML;
 
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Pattern;
+import jakarta.validation.constraints.Size;
 import java.util.List;
 
 
 public class Alumno {
     private int IdAlumno;
+    @NotEmpty(message = "El campo es requerido")
+    @NotNull(message = "El campo es requerido")
+    @Size(min = 2 , max = 20, message = "El tamaño minimo es de 2 y maximo 20")
     private String Nombre;
+    @NotEmpty(message = "El campo es requerido")
+    @NotNull(message = "El campo es requerido")
+    @Size(min = 2 , max = 20, message = "El tamaño minimo es de 2 y maximo 20")
     private String ApellidoPaterno;
     private String ApellidoMaterno;
+    @Pattern(regexp = "", message = "Ingresa un correo valido")
     private String Email;
     private String Password;
     public Semestre Semestre;
