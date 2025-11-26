@@ -3,8 +3,10 @@ package KMedrano.ProgramacionNCapasNoviembre25.Controller;
 import KMedrano.ProgramacionNCapasNoviembre25.DAO.AlumnoDAOIMplementation;
 import KMedrano.ProgramacionNCapasNoviembre25.DAO.SemestreDAOImplementation;
 import KMedrano.ProgramacionNCapasNoviembre25.ML.Alumno;
+import KMedrano.ProgramacionNCapasNoviembre25.ML.Estado;
 import KMedrano.ProgramacionNCapasNoviembre25.ML.Result;
 import jakarta.validation.Valid;
+import java.util.ArrayList;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -14,6 +16,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 @Controller // sirve para mapear interacciones del usuario 
 @RequestMapping("alumno")
@@ -66,6 +69,18 @@ public class AlumnoController {
 
         //consulta de un usuario con sus direcciones
         return "AlumnoDetail";
+    }
+    
+    @GetMapping("getEstadosByPais/{idPais}")
+    @ResponseBody // retorna un dato estructurado
+    public Result EstadosByPais(@PathVariable("idPais") int idPais){
+        Result result = new Result();
+        result.Correct = true;
+        result.Objects = new ArrayList<>();
+        result.Objects.add(new Estado(1,"Estado de México"));
+        result.Objects.add(new Estado(2,"Ciudad de México"));
+        
+        return result;
     }
 
 }

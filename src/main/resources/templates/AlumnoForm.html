@@ -113,14 +113,13 @@
                         <label for="ddlpais" class="form-label fw-bold">Pais</label>
                         <select id="ddlpais" class="form-select" aria-label="Default select example" >
                             <option value=0 selected>Selecciona un pais</option>
-                            <option></option>
+                            <option value=1>México</option>
                         </select>
                     </div>
                     <div class="col-md-3">
                         <label for="ddlestado" class="form-label fw-bold">Estado</label>
                         <select id="ddlestado" class="form-select" aria-label="Default select example">
                             <option value=0 selected>Selecciona un estado</option>
-                            <option></option>
                         </select>
                     </div>
                     <div class="col-md-3">
@@ -150,30 +149,67 @@
         <script src="https://code.jquery.com/jquery-3.7.1.js" integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4=" crossorigin="anonymous"></script>
         <script>
 
-                                        function SoloLetras(event, input) {
+                                    function SoloLetras(event, input) {
 
-                                            let key = event.key;
-                                            let asci = event.keyCode;
+                                        let key = event.key;
+                                        let asci = event.keyCode;
 
-                                            let RegExp = /[a-zA-Z]+/;
+                                        let RegExp = /[a-zA-Z]+/;
 
-                                            if (RegExp.test(key)) {
+                                        if (RegExp.test(key)) {
 
-                                                if (asci >= 64 && asci <= 90 || asci >= 97 && asci <= 122) {
-                                                    $(input).removeClass("error").addClass("correct");
-                                                } else {
-                                                    $(input).removeClass("correct").addClass("error");
-                                                    $(input).siblings(".error-msg").text("No se permiten numeros");
-                                                    event.preventDefault();
-                                                }
-                                            } else { //siblings = hermanos
+                                            if (asci >= 64 && asci <= 90 || asci >= 97 && asci <= 122) {
+                                                $(input).removeClass("error").addClass("correct");
+                                            } else {
                                                 $(input).removeClass("correct").addClass("error");
                                                 $(input).siblings(".error-msg").text("No se permiten numeros");
-                                                event.preventDefault(); //No ingresar valor en el input
+                                                event.preventDefault();
                                             }
-
+                                        } else { //siblings = hermanos
+                                            $(input).removeClass("correct").addClass("error");
+                                            $(input).siblings(".error-msg").text("No se permiten numeros");
+                                            event.preventDefault(); //No ingresar valor en el input
                                         }
 
+                                    }
+
+
+                                    $(document).ready(function () {
+
+                                        console.log("Ya termine de cargar :D")
+                                        $("#ddlpais").change(function () {
+                                            if ($("#ddlpais").val() == 0) {
+                                                $("#ddlestado").empty();
+                                                $("#ddlestado").append("<option value=0 selected>Selecciona un estado</option>")
+                                            } else {
+
+                                                console.log("Ya cambie :D")
+                                                $.ajax({
+                                                    url: "/alumno/getEstadosByPais/" + $("#ddlpais").val(),
+                                                    method: 'GET',
+                                                    dataType: 'json',
+                                                    success: function (data, textStatus, jqXHR) {
+
+                                                        if (data.Correct) {
+                                                            $("#ddlestado").empty();
+                                                            $("#ddlestado").append("<option value=0 selected>Selecciona un estado</option>")
+                                                            $.each(data.Objects, function (i, estado) {
+                                                                $("#ddlestado").append("<option value=" + estado.idEstado + ">" + estado.nombre + "</option>")
+                                                            })
+
+                                                        }
+
+                                                    },
+                                                    error: function (jqXHR, textStatus, errorThrown) {
+                                                        alert("Something went wrong :c")
+                                                    }
+                                                })
+
+                                            }
+
+                                        });
+
+                                    });
 
         </script>
     </body>

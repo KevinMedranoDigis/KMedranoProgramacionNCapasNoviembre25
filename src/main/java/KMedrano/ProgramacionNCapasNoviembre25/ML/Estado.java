@@ -7,6 +7,16 @@ public class Estado {
    private String Nombre;
    public Pais Pais;
 
+    public Estado() {
+    }
+
+    public Estado(int IdEstado, String Nombre) {
+        this.IdEstado = IdEstado;
+        this.Nombre = Nombre;
+    }
+   
+   
+
     public int getIdEstado() {
         return IdEstado;
     }
