@@ -113,7 +113,7 @@
                         <label for="ddlpais" class="form-label fw-bold">Pais</label>
                         <select id="ddlpais" class="form-select" aria-label="Default select example" >
                             <option value=0 selected>Selecciona un pais</option>
-                            <option value=1>México</option>
+                            <option th:each="pais : ${Paises}" th:text="${pais.Nombre}"  th:value="${pais.IdPais}"></option>
                         </select>
                     </div>
                     <div class="col-md-3">
@@ -178,6 +178,7 @@
 
                                         console.log("Ya termine de cargar :D")
                                         $("#ddlpais").change(function () {
+
                                             if ($("#ddlpais").val() == 0) {
                                                 $("#ddlestado").empty();
                                                 $("#ddlestado").append("<option value=0 selected>Selecciona un estado</option>")
@@ -195,20 +196,37 @@
                                                             $("#ddlestado").append("<option value=0 selected>Selecciona un estado</option>")
                                                             $.each(data.Objects, function (i, estado) {
                                                                 $("#ddlestado").append("<option value=" + estado.idEstado + ">" + estado.nombre + "</option>")
-                                                            })
-
+                                                            });
                                                         }
-
                                                     },
                                                     error: function (jqXHR, textStatus, errorThrown) {
                                                         alert("Something went wrong :c")
                                                     }
-                                                })
-
+                                                });
                                             }
-
                                         });
 
+
+                                        $("ddlEstado").change(function () {
+                                            $.ajax({
+                                                url: "/alumno/getEstadosByPais/" + $("#ddlestado").val(),
+                                                method: 'GET',
+                                                dataType: 'json',
+                                                success: function (data, textStatus, jqXHR) {
+
+                                                    if (data.Correct) {
+                                                        $("#ddlestado").empty();
+                                                        $("#ddlestado").append("<option value=0 selected>Selecciona un estado</option>")
+                                                        $.each(data.Objects, function (i, estado) {
+                                                            $("#ddlestado").append("<option value=" + estado.idEstado + ">" + estado.nombre + "</option>")
+                                                        });
+                                                    }
+                                                },
+                                                error: function (jqXHR, textStatus, errorThrown) {
+                                                    alert("Something went wrong :c")
+                                                }
+                                            });
+                                        });
                                     });
 
         </script>

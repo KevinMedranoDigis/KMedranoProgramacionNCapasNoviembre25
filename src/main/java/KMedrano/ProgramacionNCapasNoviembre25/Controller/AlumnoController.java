@@ -1,6 +1,9 @@
 package KMedrano.ProgramacionNCapasNoviembre25.Controller;
 
 import KMedrano.ProgramacionNCapasNoviembre25.DAO.AlumnoDAOIMplementation;
+import KMedrano.ProgramacionNCapasNoviembre25.DAO.EstadoDAOImplementation;
+import KMedrano.ProgramacionNCapasNoviembre25.DAO.MunicipioDAOImplemetation;
+import KMedrano.ProgramacionNCapasNoviembre25.DAO.PaisDAOImplementation;
 import KMedrano.ProgramacionNCapasNoviembre25.DAO.SemestreDAOImplementation;
 import KMedrano.ProgramacionNCapasNoviembre25.ML.Alumno;
 import KMedrano.ProgramacionNCapasNoviembre25.ML.Estado;
@@ -27,6 +30,15 @@ public class AlumnoController {
 
     @Autowired
     private SemestreDAOImplementation semestreDAOImplementation;
+    
+    @Autowired
+    private PaisDAOImplementation paisDAOImplementation;
+    
+    @Autowired
+    private EstadoDAOImplementation estadoDAOImplementation; 
+    
+    @Autowired
+    private MunicipioDAOImplemetation municipioDAOImplemetation;
 
     @GetMapping // responder a interacciones de usuario
     public String GetAll(Model model) {
@@ -44,6 +56,7 @@ public class AlumnoController {
         Result result = semestreDAOImplementation.GetAll();
         model.addAttribute("Semestres", result.Objects);
         model.addAttribute("Alumno", new Alumno());
+        model.addAttribute("Paises", paisDAOImplementation.GetAll().Objects);
 
         return "AlumnoForm";
     }
@@ -72,13 +85,25 @@ public class AlumnoController {
     }
     
     @GetMapping("getEstadosByPais/{idPais}")
-    @ResponseBody // retorna un dato estructurado
+    @ResponseBody // retorna un dato estructurado (JA)
     public Result EstadosByPais(@PathVariable("idPais") int idPais){
-        Result result = new Result();
-        result.Correct = true;
-        result.Objects = new ArrayList<>();
-        result.Objects.add(new Estado(1,"Estado de México"));
-        result.Objects.add(new Estado(2,"Ciudad de México"));
+        
+        
+        Result resultEstados = estadoDAOImplementation.GetEstadoByPais(idPais);
+//        Result result = new Result();
+//        result.Correct = true;
+//        result.Objects = new ArrayList<>();
+//        result.Objects.add(new Estado(1,"Estado de México"));
+//        result.Objects.add(new Estado(2,"Ciudad de México"));
+    //        Result result = paisDAOImplementation.GetAll();
+        return resultEstados;
+    }
+    
+    @GetMapping("getMunicipioByEstado/{IdEstado}")
+    @ResponseBody
+    public Result GetMunicipioByEstado(@PathVariable int IdEstado){
+        
+        Result result  = municipioDAOImplemetation.GetMunicipioByEstado(IdEstado);
         
         return result;
     }
