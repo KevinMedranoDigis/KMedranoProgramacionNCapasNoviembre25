@@ -6,6 +6,8 @@ import KMedrano.ProgramacionNCapasNoviembre25.DAO.MunicipioDAOImplemetation;
 import KMedrano.ProgramacionNCapasNoviembre25.DAO.PaisDAOImplementation;
 import KMedrano.ProgramacionNCapasNoviembre25.DAO.SemestreDAOImplementation;
 import KMedrano.ProgramacionNCapasNoviembre25.ML.Alumno;
+import KMedrano.ProgramacionNCapasNoviembre25.ML.Colonia;
+import KMedrano.ProgramacionNCapasNoviembre25.ML.Direccion;
 import KMedrano.ProgramacionNCapasNoviembre25.ML.Estado;
 import KMedrano.ProgramacionNCapasNoviembre25.ML.Result;
 import jakarta.validation.Valid;
@@ -120,15 +122,36 @@ public class AlumnoController {
         }
         else if(IdDireccion == 0){ //Aregar direccion
                 //Formulario de direccion sin datos
+                    
+                Alumno alumno = new Alumno();
+                alumno.setIdAlumno(1);
+                alumno.Direcciones = new ArrayList<>();
+                alumno.Direcciones.add(new Direccion());
+                alumno.Direcciones.get(0).setIdDireccion(1);
+                 model.addAttribute("Paises", paisDAOImplementation.GetAll().Objects);
+                model.addAttribute("Alumno", alumno);
+                
         
+                return "AlumnoForm";
                 }else{// Editar Direccion
                     //Retornar formulario direccion con datos
+                   
+                    //Simulacion de DAOImplementation
+                    Alumno alumno = new Alumno();
+                    alumno.Direcciones = new ArrayList<>();
+                    alumno.Direcciones.add(new Direccion());
+                    alumno.Direcciones.get(0).setIdDireccion(1);
+                    alumno.Direcciones.get(0).setCalle("Francisco");
+                    alumno.Direcciones.get(0).setNumeroExterior("34");
+                    alumno.Direcciones.get(0).setNumeroInterior("34");
+                    alumno.Direcciones.get(0).Colonia = new Colonia();
+                    
+                    model.addAttribute("Alumno", alumno);
+                    model.addAttribute("Paises", paisDAOImplementation.GetAll().Objects);
+                    return "AlumnoForm";
         
         }
         
-            
-            
-            return "AlumnoForm";
     }
 
     

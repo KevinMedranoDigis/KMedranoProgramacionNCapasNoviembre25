@@ -84,7 +84,9 @@
 
                 <hr>
 
-                <div th:if="${(Alumno.IdAlumno == 0 && Alumno.Direcciones[0].IdDireccion == 0) || (Alumno.IdAlumno != 0 && Alumno.Direcciones != null)  }">
+                <div th:if="${(Alumno.IdAlumno == 0 && Alumno.Direcciones[0].IdDireccion == 0) 
+                     || (Alumno.IdAlumno != 0 && Alumno.Direcciones[0].IdDireccion > 0) 
+                     || (Alumno.IdAlumno != 0 && Alumno.Direcciones[0].IdDireccion == 0)}">
                     <div class="row mb-3">
                         <div class="col-md-8">
                             <label class="form-label fw-bold">Calle</label>
