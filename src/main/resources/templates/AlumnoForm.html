@@ -23,7 +23,7 @@
 
             <form method="post" th:object="${Alumno}" th:action="@{add}">
 
-                <div class="row">
+                <div class="row" th:if="${(Alumno.IdAlumno == 0 && Alumno.Direcciones[0].IdDireccion == 0) || (Alumno.IdAlumno != 0 && Alumno.Direcciones == null)}">
                     <div class="col-md-4 text-center d-flex flex-column align-items-center">
                         <div class="card p-3 w-100 h-100">
                             <label for="imagenFile" class="form-label fw-bold">Imagen</label>
@@ -34,6 +34,7 @@
                     <div class="col-md-8">
                         <div class="card p-3 h-100">
                             <div class="mb-3">
+                                <input type="hidden" th:field="*{IdAlumno}">
                                 <label for="NombreAlumno" class="form-label fw-bold">Nombre</label>
                                 <input  type="text" class="form-control" placeholder="Nombre" id="NombreAlumno" th:field="*{Nombre}" onkeypress="SoloLetras(event, this)">  
                                 <span class="text-danger" th:if="${#fields.hasErrors('Nombre')}" th:errors="${Alumno.Nombre}" ></span>
@@ -72,7 +73,7 @@
                             <div class="row">
                                 <label for="semestreAlumno" class="form-label fw-bold">Semestre</label>
                                 <!--                                <input id="semestreAlumno" type="text" class="form-control" placeholder="Semestre"  th:field="*{Semestre.IdSemestre}">-->
-                                <select class="form-control">
+                                <select class="form-control" th:field="*{Semestre.IdSemestre}">
                                     <option value=0> Selecciona un Semestre</option>
                                     <option th:each=" semestre : ${Semestres}" th:text="${semestre.Nombre}" th:value="${semestre.IdSemestre}"></option>
                                 </select>
@@ -83,63 +84,68 @@
 
                 <hr>
 
-                <div class="row mb-3">
-                    <div class="col-md-8">
-                        <label class="form-label fw-bold">Calle</label>
-                        <input type="text" class="form-control" placeholder="Calle"   th:field="*{Direcciones[0].Calle}">
+                <div th:if="${(Alumno.IdAlumno == 0 && Alumno.Direcciones[0].IdDireccion == 0) || (Alumno.IdAlumno != 0 && Alumno.Direcciones != null)  }">
+                    <div class="row mb-3">
+                        <div class="col-md-8">
+                            <label class="form-label fw-bold">Calle</label>
+                            <input type="text" class="form-control" placeholder="Calle"   th:field="*{Direcciones[0].Calle}">
+                        </div>
+                        <div class="col-md-2">
+                            <label class="form-label fw-bold"># Interior</label>
+                            <input type="text" class="form-control" placeholder="# int." th:field="*{Direcciones[0].NumeroInterior}">
+                        </div>
+                        <div class="col-md-2">
+                            <label class="form-label fw-bold"># Exterior</label>
+                            <input type="text" class="form-control" placeholder="# ext." th:field="*{Direcciones[0].NumeroExterior}">
+                        </div>
                     </div>
-                    <div class="col-md-2">
-                        <label class="form-label fw-bold"># Interior</label>
-                        <input type="text" class="form-control" placeholder="# int." th:field="*{Direcciones[0].NumeroInterior}">
+
+                    <div class="row"> 
+
+                        <div class="col-md-3">
+                            <label for="colonia" class="form-label fw-bold">Colonia</label>
+                            <input id="colonia" type="text" class="form-control" placeholder="Colonia" th:field="*{Direcciones[0].Colonia.IdColonia}">
+                        </div>
+
                     </div>
-                    <div class="col-md-2">
-                        <label class="form-label fw-bold"># Exterior</label>
-                        <input type="text" class="form-control" placeholder="# ext." th:field="*{Direcciones[0].NumeroExterior}">
+
+                    <div class="row">
+
+                        <div class="col-md-3">
+                            <label for="ddlpais" class="form-label fw-bold">Pais</label>
+                            <select id="ddlpais" class="form-select" aria-label="Default select example" >
+                                <option value=0 selected>Selecciona un pais</option>
+                                <option th:each="pais : ${Paises}" th:text="${pais.Nombre}"  th:value="${pais.IdPais}"></option>
+                            </select>
+                        </div>
+                        <div class="col-md-3">
+                            <label for="ddlestado" class="form-label fw-bold">Estado</label>
+                            <select id="ddlestado" class="form-select" aria-label="Default select example">
+                                <option value=0 selected>Selecciona un estado</option>
+                            </select>
+                        </div>
+                        <div class="col-md-3">
+                            <label for="ddlmunicipio" class="form-label fw-bold">Municipio</label>
+                            <select id="ddlmunicipio" class="form-select" aria-label="Default select example">
+                                <option value=0 selected>Selecciona un municipio</option>
+                            </select>
+                        </div>
+                        <div class="col-md-3">
+                            <label for="ddlcolonia" class="form-label fw-bold">Colonia</label>
+                            <select id="ddlcolonia" class="form-select" aria-label="Default select example">
+                                <option value=0 selected>Selecciona una colonia</option>
+                                <option value=1 data-cp="03500">Colonia A</option>
+                                <option value=2 data-cp="03501">Colonia B</option>
+                            </select>
+                        </div>
+
+                        <input type="text" id="codigoPostal"/>
+
                     </div>
+
                 </div>
 
-                <div class="row"> 
 
-                    <div class="col-md-3">
-                        <label for="colonia" class="form-label fw-bold">Colonia</label>
-                        <input id="colonia" type="text" class="form-control" placeholder="Colonia" th:field="*{Direcciones[0].Colonia.IdColonia}">
-                    </div>
-
-                </div>
-
-                <div class="row">
-
-                    <div class="col-md-3">
-                        <label for="ddlpais" class="form-label fw-bold">Pais</label>
-                        <select id="ddlpais" class="form-select" aria-label="Default select example" >
-                            <option value=0 selected>Selecciona un pais</option>
-                            <option th:each="pais : ${Paises}" th:text="${pais.Nombre}"  th:value="${pais.IdPais}"></option>
-                        </select>
-                    </div>
-                    <div class="col-md-3">
-                        <label for="ddlestado" class="form-label fw-bold">Estado</label>
-                        <select id="ddlestado" class="form-select" aria-label="Default select example">
-                            <option value=0 selected>Selecciona un estado</option>
-                        </select>
-                    </div>
-                    <div class="col-md-3">
-                        <label for="ddlmunicipio" class="form-label fw-bold">Municipio</label>
-                        <select id="ddlmunicipio" class="form-select" aria-label="Default select example">
-                            <option value=0 selected>Selecciona un municipio</option>
-                        </select>
-                    </div>
-                    <div class="col-md-3">
-                        <label for="ddlcolonia" class="form-label fw-bold">Colonia</label>
-                        <select id="ddlcolonia" class="form-select" aria-label="Default select example">
-                            <option value=0 selected>Selecciona una colonia</option>
-                            <option value=1 data-cp="03500">Colonia A</option>
-                            <option value=2 data-cp="03501">Colonia B</option>
-                        </select>
-                    </div>
-
-                    <input type="text" id="codigoPostal"/>
-
-                </div>
 
                 <button type="submit" class="btn btn-success mt-4 w-100 fw-bold">Agregar</button>
             </form>
@@ -228,6 +234,14 @@
                                             });
                                         });
                                     });
+
+                                    $("#ddlmunicipio").change(function () {
+
+
+                                    });
+
+
+
 
         </script>
     </body>

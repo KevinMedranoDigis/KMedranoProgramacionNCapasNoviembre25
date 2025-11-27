@@ -4,6 +4,7 @@ import KMedrano.ProgramacionNCapasNoviembre25.ML.Alumno;
 import KMedrano.ProgramacionNCapasNoviembre25.ML.Colonia;
 import KMedrano.ProgramacionNCapasNoviembre25.ML.Direccion;
 import KMedrano.ProgramacionNCapasNoviembre25.ML.Result;
+import KMedrano.ProgramacionNCapasNoviembre25.ML.Semestre;
 import java.sql.ResultSet;
 import java.util.ArrayList;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,6 +33,7 @@ public class AlumnoDAOIMplementation implements IAlumno {
                 ResultSet resultSet = (ResultSet) callableStatement.getObject(1);
 
                 result.Objects = new ArrayList<>();
+                
                 while (resultSet.next()) {
                     int IdAlumnoPorIngresar = resultSet.getInt("IdAlumno");
 
@@ -67,6 +69,7 @@ public class AlumnoDAOIMplementation implements IAlumno {
                         result.Objects.add(alumno);
                     }
                 }
+                
                 return true;
             });
 
@@ -97,12 +100,111 @@ public class AlumnoDAOIMplementation implements IAlumno {
                 callableStatement.setString(7, alumno.Direcciones.get(0).getNumeroInterior());
                 callableStatement.setString(8, alumno.Direcciones.get(0).getNumeroExterior());
                 callableStatement.setInt(9, alumno.Direcciones.get(0).Colonia.getIdColonia());
-                
+
                 callableStatement.executeUpdate();
-                
+
                 return true;
             });
 
+        } catch (Exception ex) {
+            result.Correct = false;
+            result.ErrorMessage = ex.getLocalizedMessage();
+            result.ex = ex;
+        }
+
+        return result;
+    }
+
+    @Override
+    public Result GetByIdDirecciones(int IdAlumno) {
+        Result result = new Result();
+        
+        
+        jdbcTemplate.execute("{CALL AlumnoDireccionGetById(?,?)}", (CallableStatementCallback<Boolean>) callableStatement ->{
+            
+            callableStatement.setInt(1, IdAlumno);
+            callableStatement.registerOutParameter(2, java.sql.Types.REF_CURSOR);
+            callableStatement.execute();
+            
+            ResultSet resultSet = (ResultSet) callableStatement.getObject(2);
+            result.Objects = new ArrayList<>();
+            
+            while (resultSet.next()) {
+                    int IdAlumnoPorIngresar = resultSet.getInt("IdAlumno");
+
+                    if (!result.Objects.isEmpty() && ((Alumno) result.Objects.get(result.Objects.size() - 1)).getIdAlumno() == IdAlumnoPorIngresar) {
+
+                        Direccion direccion = new KMedrano.ProgramacionNCapasNoviembre25.ML.Direccion();
+                        direccion.setCalle(resultSet.getString("Calle"));
+                        direccion.setNumeroInterior(resultSet.getString("NumeroInterior"));
+                        direccion.Colonia = new Colonia();
+                        direccion.Colonia.setIdColonia(resultSet.getInt("IdColonia"));
+                        direccion.Colonia.setNombre(resultSet.getString("NombreColonia"));
+                        Alumno alumno = ((Alumno) result.Objects.get(result.Objects.size() - 1));
+                        alumno.Direcciones.add(direccion);
+
+                    } else {
+
+                        Alumno alumno = new Alumno();
+                        alumno.setIdAlumno(IdAlumnoPorIngresar);
+                        alumno.setNombre(resultSet.getString("Nombre"));
+                        int IdDireccion = resultSet.getInt("IdDireccion");
+                        if (IdDireccion != 0) {
+                            alumno.Direcciones = new ArrayList<>();
+                            Direccion direccion = new Direccion();
+                            direccion.setIdDireccion(IdDireccion);
+                            direccion.setCalle(resultSet.getString("Calle"));
+                            direccion.setNumeroInterior(resultSet.getString("NumeroInterior"));
+                            direccion.Colonia = new Colonia();
+                            direccion.Colonia.setIdColonia(resultSet.getInt("IdColonia"));
+                            direccion.Colonia.setNombre(resultSet.getString("NombreColonia"));
+                            alumno.Direcciones.add(direccion);
+                        }
+
+                        result.Objects.add(alumno);
+                    }
+                }
+            return true;
+        });
+
+        return result;
+    }
+
+    @Override
+    public Result GetById(int IdAlumno) {
+        Result result = new Result();
+        
+        try {
+            
+            result.Correct = jdbcTemplate.execute("{CALL AlumnoGetById(?,?)}", (CallableStatementCallback<Boolean>) callableStatement ->{
+                callableStatement.registerOutParameter(1, java.sql.Types.REF_CURSOR);
+                callableStatement.setInt(2, IdAlumno);
+                callableStatement.execute();
+                
+                ResultSet resultSet = (ResultSet) callableStatement.getObject(1);
+                
+                while(resultSet.next()){
+                    Alumno alumno = new Alumno();
+                    alumno.setIdAlumno(resultSet.getInt("IdAlumno"));
+                    alumno.setNombre(resultSet.getString("Nombre"));
+                    alumno.setApellidoPaterno(resultSet.getString("ApellidoPaterno"));
+                    alumno.setApellidoMaterno(resultSet.getString("ApellidoMaterno"));
+                    alumno.setEmail(resultSet.getString("Email"));
+                    alumno.setPassword(resultSet.getString("Password"));
+                    alumno.Semestre = new Semestre();
+                    
+                    alumno.Semestre.setIdSemestre(resultSet.getInt("IdSemestre"));
+                    alumno.Semestre.setNombre(resultSet.getString("NombreSemestre"));
+                    
+                    result.Object = alumno;
+                }
+                
+                return true;
+            });
+            
+            
+            
+            
         } catch (Exception ex) {
             result.Correct = false;
             result.ErrorMessage = ex.getLocalizedMessage();

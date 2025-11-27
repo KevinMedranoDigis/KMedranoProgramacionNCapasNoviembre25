@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 @Controller // sirve para mapear interacciones del usuario 
@@ -78,9 +79,12 @@ public class AlumnoController {
     
 
     @GetMapping("detail/{IdAlumno}")
-    public String Detail(@PathVariable("IdAlumno") int IdAlumno) {
+    public String Detail(@PathVariable("IdAlumno") int IdAlumno, Model model) {
 
         //consulta de un usuario con sus direcciones
+        Result result = alumnoDAOImplementation.GetByIdDirecciones(IdAlumno);
+        model.addAttribute("Alumno", result.Objects);
+        
         return "AlumnoDetail";
     }
     
@@ -88,14 +92,8 @@ public class AlumnoController {
     @ResponseBody // retorna un dato estructurado (JA)
     public Result EstadosByPais(@PathVariable("idPais") int idPais){
         
-        
         Result resultEstados = estadoDAOImplementation.GetEstadoByPais(idPais);
-//        Result result = new Result();
-//        result.Correct = true;
-//        result.Objects = new ArrayList<>();
-//        result.Objects.add(new Estado(1,"Estado de México"));
-//        result.Objects.add(new Estado(2,"Ciudad de México"));
-    //        Result result = paisDAOImplementation.GetAll();
+
         return resultEstados;
     }
     
@@ -107,5 +105,32 @@ public class AlumnoController {
         
         return result;
     }
+    
+    @GetMapping("/formEditable") //Solo renderiza
+    public String Form(@RequestParam("IdAlumno") int IdAlumno, @RequestParam(required = false) Integer IdDireccion, Model model){
+    
+        
+        if(IdDireccion == null){ // editar usuario
+            Result result = alumnoDAOImplementation.GetById(IdAlumno);
+            
+            Result resultSemestres = semestreDAOImplementation.GetAll();
+            model.addAttribute("Semestres", resultSemestres.Objects);
+            model.addAttribute("Alumno", result.Object);
+            return "AlumnoForm";
+        }
+        else if(IdDireccion == 0){ //Aregar direccion
+                //Formulario de direccion sin datos
+        
+                }else{// Editar Direccion
+                    //Retornar formulario direccion con datos
+        
+        }
+        
+            
+            
+            return "AlumnoForm";
+    }
 
+    
+    
 }

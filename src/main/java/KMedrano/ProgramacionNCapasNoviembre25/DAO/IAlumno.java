@@ -14,4 +14,10 @@ public interface IAlumno {
     public Result Add(Alumno alumno);
     //crear mi firma de metodo (Add)
     
+    public Result GetByIdDirecciones(int IdAlumno);
+    
+    public Result GetById(int IdAlumno);
+    
+    
+    
 }
