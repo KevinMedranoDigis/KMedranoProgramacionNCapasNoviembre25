@@ -21,9 +21,9 @@
     <body >
         <div class="container">
 
-            <form method="post" th:object="${Alumno}" th:action="@{add}">
+            <form method="post" th:object="${Alumno}" th:action="@{formEditable}">
 
-                <div class="row" th:if="${(Alumno.IdAlumno == 0 && Alumno.Direcciones[0].IdDireccion == 0) || (Alumno.IdAlumno != 0 && Alumno.Direcciones == null)}">
+                <div class="row" th:if="${(Alumno.IdAlumno == 0 && Alumno.Direcciones[0].IdDireccion == 0) || (Alumno.IdAlumno != 0 && Alumno.Direcciones[0].IdDireccion == -1)}">
                     <div class="col-md-4 text-center d-flex flex-column align-items-center">
                         <div class="card p-3 w-100 h-100">
                             <label for="imagenFile" class="form-label fw-bold">Imagen</label>
@@ -34,7 +34,10 @@
                     <div class="col-md-8">
                         <div class="card p-3 h-100">
                             <div class="mb-3">
+                                
                                 <input type="hidden" th:field="*{IdAlumno}">
+                                <input type="hidden" th:field="*{Direcciones[0].IdDireccion}"></input>
+                                
                                 <label for="NombreAlumno" class="form-label fw-bold">Nombre</label>
                                 <input  type="text" class="form-control" placeholder="Nombre" id="NombreAlumno" th:field="*{Nombre}" onkeypress="SoloLetras(event, this)">  
                                 <span class="text-danger" th:if="${#fields.hasErrors('Nombre')}" th:errors="${Alumno.Nombre}" ></span>

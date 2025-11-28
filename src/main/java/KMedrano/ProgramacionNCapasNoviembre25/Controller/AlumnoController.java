@@ -8,7 +8,6 @@ import KMedrano.ProgramacionNCapasNoviembre25.DAO.SemestreDAOImplementation;
 import KMedrano.ProgramacionNCapasNoviembre25.ML.Alumno;
 import KMedrano.ProgramacionNCapasNoviembre25.ML.Colonia;
 import KMedrano.ProgramacionNCapasNoviembre25.ML.Direccion;
-import KMedrano.ProgramacionNCapasNoviembre25.ML.Estado;
 import KMedrano.ProgramacionNCapasNoviembre25.ML.Result;
 import jakarta.validation.Valid;
 import java.util.ArrayList;
@@ -33,13 +32,13 @@ public class AlumnoController {
 
     @Autowired
     private SemestreDAOImplementation semestreDAOImplementation;
-    
+
     @Autowired
     private PaisDAOImplementation paisDAOImplementation;
-    
+
     @Autowired
-    private EstadoDAOImplementation estadoDAOImplementation; 
-    
+    private EstadoDAOImplementation estadoDAOImplementation;
+
     @Autowired
     private MunicipioDAOImplemetation municipioDAOImplemetation;
 
@@ -53,12 +52,16 @@ public class AlumnoController {
         return "AlumnoIndex"; // -> Busca una vista que se llame Index
     }
 
-    @GetMapping("form")
-    public String Form(Model model) {
+    //Agrega todo (AlumnoDirecion)
+    @GetMapping("form/{IdAlumno}")
+    public String Form(@PathVariable int IdAlumno, Model model) {
 
         Result result = semestreDAOImplementation.GetAll();
         model.addAttribute("Semestres", result.Objects);
-        model.addAttribute("Alumno", new Alumno());
+        Alumno alumno = new Alumno();
+        alumno.Direcciones = new ArrayList<>();
+        alumno.Direcciones.add(new Direccion());
+        model.addAttribute("Alumno", alumno);
         model.addAttribute("Paises", paisDAOImplementation.GetAll().Objects);
 
         return "AlumnoForm";
@@ -78,7 +81,6 @@ public class AlumnoController {
 
         return "AlumnoIndex";
     }
-    
 
     @GetMapping("detail/{IdAlumno}")
     public String Detail(@PathVariable("IdAlumno") int IdAlumno, Model model) {
@@ -86,74 +88,102 @@ public class AlumnoController {
         //consulta de un usuario con sus direcciones
         Result result = alumnoDAOImplementation.GetByIdDirecciones(IdAlumno);
         model.addAttribute("Alumno", result.Objects);
-        
+
         return "AlumnoDetail";
     }
-    
+
     @GetMapping("getEstadosByPais/{idPais}")
     @ResponseBody // retorna un dato estructurado (JA)
-    public Result EstadosByPais(@PathVariable("idPais") int idPais){
-        
+    public Result EstadosByPais(@PathVariable("idPais") int idPais) {
+
         Result resultEstados = estadoDAOImplementation.GetEstadoByPais(idPais);
 
         return resultEstados;
     }
-    
+
     @GetMapping("getMunicipioByEstado/{IdEstado}")
     @ResponseBody
-    public Result GetMunicipioByEstado(@PathVariable int IdEstado){
-        
-        Result result  = municipioDAOImplemetation.GetMunicipioByEstado(IdEstado);
-        
+    public Result GetMunicipioByEstado(@PathVariable int IdEstado) {
+
+        Result result = municipioDAOImplemetation.GetMunicipioByEstado(IdEstado);
+
         return result;
     }
-    
+
+    //Agrega o Actualiza  Usuario o Direccion
     @GetMapping("/formEditable") //Solo renderiza
-    public String Form(@RequestParam("IdAlumno") int IdAlumno, @RequestParam(required = false) Integer IdDireccion, Model model){
-    
-        
-        if(IdDireccion == null){ // editar usuario
+    public String Form(@RequestParam("IdAlumno") int IdAlumno, @RequestParam(required = false) Integer IdDireccion, Model model) {
+
+        if (IdDireccion == null) { // editar usuario
             Result result = alumnoDAOImplementation.GetById(IdAlumno);
-            
+
             Result resultSemestres = semestreDAOImplementation.GetAll();
             model.addAttribute("Semestres", resultSemestres.Objects);
-            model.addAttribute("Alumno", result.Object);
+            Alumno alumno = (Alumno) result.Object;
+            alumno.Direcciones = new ArrayList<>();
+            alumno.Direcciones.add(new Direccion());
+            alumno.Direcciones.get(0).setIdDireccion(-1);
+            model.addAttribute("Alumno", alumno);
             return "AlumnoForm";
+        } else if (IdDireccion == 0) { //Aregar direccion
+            //Formulario de direccion sin datos
+
+            Alumno alumno = new Alumno();
+            alumno.setIdAlumno(1);
+            alumno.Direcciones = new ArrayList<>();
+            alumno.Direcciones.add(new Direccion());
+            alumno.Direcciones.get(0).setIdDireccion(1);
+            model.addAttribute("Paises", paisDAOImplementation.GetAll().Objects);
+            model.addAttribute("Alumno", alumno);
+
+            return "AlumnoForm";
+        } else {// Editar Direccion
+            //Retornar formulario direccion con datos
+
+            //Simulacion de DAOImplementation
+            Alumno alumno = new Alumno();
+            alumno.Direcciones = new ArrayList<>();
+            alumno.Direcciones.add(new Direccion());
+            alumno.Direcciones.get(0).setIdDireccion(1);
+            alumno.Direcciones.get(0).setCalle("Francisco");
+            alumno.Direcciones.get(0).setNumeroExterior("34");
+            alumno.Direcciones.get(0).setNumeroInterior("34");
+            alumno.Direcciones.get(0).Colonia = new Colonia();
+
+            model.addAttribute("Alumno", alumno);
+            model.addAttribute("Paises", paisDAOImplementation.GetAll().Objects);
+            return "AlumnoForm";
+
         }
-        else if(IdDireccion == 0){ //Aregar direccion
-                //Formulario de direccion sin datos
-                    
-                Alumno alumno = new Alumno();
-                alumno.setIdAlumno(1);
-                alumno.Direcciones = new ArrayList<>();
-                alumno.Direcciones.add(new Direccion());
-                alumno.Direcciones.get(0).setIdDireccion(1);
-                 model.addAttribute("Paises", paisDAOImplementation.GetAll().Objects);
-                model.addAttribute("Alumno", alumno);
-                
-        
-                return "AlumnoForm";
-                }else{// Editar Direccion
-                    //Retornar formulario direccion con datos
-                   
-                    //Simulacion de DAOImplementation
-                    Alumno alumno = new Alumno();
-                    alumno.Direcciones = new ArrayList<>();
-                    alumno.Direcciones.add(new Direccion());
-                    alumno.Direcciones.get(0).setIdDireccion(1);
-                    alumno.Direcciones.get(0).setCalle("Francisco");
-                    alumno.Direcciones.get(0).setNumeroExterior("34");
-                    alumno.Direcciones.get(0).setNumeroInterior("34");
-                    alumno.Direcciones.get(0).Colonia = new Colonia();
-                    
-                    model.addAttribute("Alumno", alumno);
-                    model.addAttribute("Paises", paisDAOImplementation.GetAll().Objects);
-                    return "AlumnoForm";
-        
+
+    }
+    
+    
+    @PostMapping("formEditable")
+    public String Form(@ModelAttribute Alumno alumno){
+    
+        if(alumno.getIdAlumno() == 0){
+            
+            //alumnoDAOImplementation.AddAlumnoDireccion()
+            System.out.println("Estoy agregando alumno");
+        }else
+        {
+            if(alumno.Direcciones.get(0).getIdDireccion() == -1){
+            
+            //alumnoDAOIMplementation.UpdateAlumno()
+                System.out.println("Estoy actualizando alumno");
+            }else if(alumno.Direcciones.get(0).getIdDireccion() == 0){
+            
+            //alumnoDAOImplementation.AddDireccion()
+            
+            }else{
+            
+            //alumnoDAOImplementation.updateDireccion
+            }
         }
         
+        
+    return "redirect:/AlumnoIndex";
     }
 
-    
-    
 }
