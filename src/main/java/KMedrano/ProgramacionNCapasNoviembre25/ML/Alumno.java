@@ -19,6 +19,9 @@ public class Alumno {
     @NotNull(message = "El campo es requerido")
     @Size(min = 2 , max = 20, message = "El tamaño minimo es de 2 y maximo 20")
     private String ApellidoPaterno;
+    @NotEmpty(message = "El campo es requerido")
+    @NotNull(message = "El campo es requerido")
+    @Size(min = 2 , max = 20, message = "El tamaño minimo es de 2 y maximo 20")
     private String ApellidoMaterno;
     @Pattern(regexp = "", message = "Ingresa un correo valido")
     private String Email;

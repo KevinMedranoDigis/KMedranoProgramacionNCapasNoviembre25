@@ -8,15 +8,14 @@ import KMedrano.ProgramacionNCapasNoviembre25.DAO.SemestreDAOImplementation;
 import KMedrano.ProgramacionNCapasNoviembre25.ML.Alumno;
 import KMedrano.ProgramacionNCapasNoviembre25.ML.Colonia;
 import KMedrano.ProgramacionNCapasNoviembre25.ML.Direccion;
+import KMedrano.ProgramacionNCapasNoviembre25.ML.ErrorCarga;
 import KMedrano.ProgramacionNCapasNoviembre25.ML.Result;
+import KMedrano.ProgramacionNCapasNoviembre25.Service.ValidationService;
 import jakarta.validation.Valid;
 import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -25,6 +24,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
+import org.springframework.validation.FieldError;
+import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -37,7 +38,7 @@ import org.springframework.web.multipart.MultipartFile;
 @Controller // sirve para mapear interacciones del usuario 
 @RequestMapping("alumno")
 public class AlumnoController {
-
+    
     @Autowired // Inyección de dependencias (field injection)
     private AlumnoDAOIMplementation alumnoDAOImplementation;
 
@@ -52,6 +53,9 @@ public class AlumnoController {
 
     @Autowired
     private MunicipioDAOImplemetation municipioDAOImplemetation;
+    
+    @Autowired
+    private ValidationService validatorService;
 
     @GetMapping // responder a interacciones de usuario
     public String GetAll(Model model) {
@@ -204,13 +208,12 @@ public class AlumnoController {
         String extencion = archivo.getOriginalFilename().split("\\.")[1];
 
         String path = System.getProperty("user.dir");
-        String pathArchivo = "src\\main\\resources\\archivos";
+        String pathArchivo = "src/main/resources/archivos";
         String fecha = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMddHHmmss"));
         String rutaabsoluta = path + "/" + pathArchivo + "/" + fecha + archivo.getOriginalFilename();
 
-        archivo.transferTo(new File(rutaabsoluta));
-
-        List<Alumno> alumnos;
+        //archivo.transferTo(new File(rutaabsoluta));
+        List<Alumno> alumnos = new ArrayList<>();
 
         if (extencion.equals("txt")) {
             //lectura de un archivo txt
@@ -218,30 +221,73 @@ public class AlumnoController {
         } else {
             //lectura de una arhivo xlxs
         }
-
+        
+        List<ErrorCarga> errores = ValidarDatosTxt(alumnos);
+        
+        if(errores!= null || errores.isEmpty()){
+            //Retornar vista sin errores
+        }else{
+            
+            //retornar la lista de errores a la vista
+        }
+        
+        
         return "AlumnoIndex";
     }
 
     public List<Alumno> LecturaArchivo(MultipartFile archivo) {
 
-        try (InputStream inputStream = archivo.getInputStream(); BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream))) {
+        List<Alumno> alumnos = new ArrayList<>();
+        
+        try (InputStream inputStream = archivo.getInputStream(); BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream));) {
 
             bufferedReader.readLine();
-            String line;
+            String line = "";
             while ((line = bufferedReader.readLine()) != null) {
                 String[] datos = line.split("\\|");
 
                 Alumno alumno = new Alumno();
                 alumno.setNombre(datos[0]);
-
-                System.out.println("leyendo datos: " + line);
+                alumno.setApellidoPaterno(datos[1]);
+                alumno.setApellidoMaterno(datos[2]);
+                
+                alumnos.add(alumno);
             }
 
         } catch (Exception ex) {
-            System.out.println(ex.getLocalizedMessage());
+            return null;
         }
 
-        return null;
+        return alumnos;
+    }
+    
+    //Validacion 
+    
+    public List<ErrorCarga> ValidarDatosTxt(List<Alumno> alumnos){
+        
+        List<ErrorCarga> erroresCarga = new ArrayList<>();
+        int LineaError = 0;
+        
+        for (Alumno alumno : alumnos) {
+            LineaError++;
+            BindingResult bindingResult = validatorService.validateObjects(alumno);
+            List<ObjectError> errors = bindingResult.getAllErrors();
+            
+            for (ObjectError error : errors) {
+                FieldError fieldError = (FieldError) error;
+                ErrorCarga errorCarga = new ErrorCarga();
+                errorCarga.linea = LineaError;
+                errorCarga.Campo = fieldError.getField();
+                errorCarga.Descripcion = fieldError.getDefaultMessage();
+                erroresCarga.add(errorCarga);
+                
+            }
+        }
+        
+        
+        
+        return erroresCarga;
+        
     }
 
 }
