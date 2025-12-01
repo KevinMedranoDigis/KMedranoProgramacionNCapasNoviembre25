@@ -21,7 +21,7 @@
     <body >
         <div class="container">
 
-            <form method="post" th:object="${Alumno}" th:action="@{formEditable}">
+            <form method="post" th:object="${Alumno}" th:action="@{/alumno/formEditable}">
 
                 <div class="row" th:if="${(Alumno.IdAlumno == 0 && Alumno.Direcciones[0].IdDireccion == 0) || (Alumno.IdAlumno != 0 && Alumno.Direcciones[0].IdDireccion == -1)}">
                     <div class="col-md-4 text-center d-flex flex-column align-items-center">
@@ -137,7 +137,7 @@
                         </div>
                         <div class="col-md-3">
                             <label for="ddlcolonia" class="form-label fw-bold">Colonia</label>
-                            <select id="ddlcolonia" class="form-select" aria-label="Default select example">
+                            <select id="ddlcolonia" class="form-select" aria-label="Default select example" th:field="*{Direcciones[0].Colonia.IdColonia}">
                                 <option value=0 selected>Selecciona una colonia</option>
                                 <option value=1 data-cp="03500">Colonia A</option>
                                 <option value=2 data-cp="03501">Colonia B</option>

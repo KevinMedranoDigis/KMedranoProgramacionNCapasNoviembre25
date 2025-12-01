@@ -10,7 +10,17 @@ import KMedrano.ProgramacionNCapasNoviembre25.ML.Colonia;
 import KMedrano.ProgramacionNCapasNoviembre25.ML.Direccion;
 import KMedrano.ProgramacionNCapasNoviembre25.ML.Result;
 import jakarta.validation.Valid;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -22,6 +32,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.multipart.MultipartFile;
 
 @Controller // sirve para mapear interacciones del usuario 
 @RequestMapping("alumno")
@@ -142,6 +153,7 @@ public class AlumnoController {
 
             //Simulacion de DAOImplementation
             Alumno alumno = new Alumno();
+            alumno.setIdAlumno(1);
             alumno.Direcciones = new ArrayList<>();
             alumno.Direcciones.add(new Direccion());
             alumno.Direcciones.get(0).setIdDireccion(1);
@@ -157,33 +169,79 @@ public class AlumnoController {
         }
 
     }
-    
-    
+
     @PostMapping("formEditable")
-    public String Form(@ModelAttribute Alumno alumno){
-    
-        if(alumno.getIdAlumno() == 0){
-            
+    public String Form(@ModelAttribute Alumno alumno) {
+
+        if (alumno.getIdAlumno() == 0) {
+
             //alumnoDAOImplementation.AddAlumnoDireccion()
             System.out.println("Estoy agregando alumno");
-        }else
-        {
-            if(alumno.Direcciones.get(0).getIdDireccion() == -1){
-            
-            //alumnoDAOIMplementation.UpdateAlumno()
+        } else {
+            if (alumno.Direcciones.get(0).getIdDireccion() == -1) {
+
+                //alumnoDAOIMplementation.UpdateAlumno()
                 System.out.println("Estoy actualizando alumno");
-            }else if(alumno.Direcciones.get(0).getIdDireccion() == 0){
-            
-            //alumnoDAOImplementation.AddDireccion()
-            
-            }else{
-            
-            //alumnoDAOImplementation.updateDireccion
+            } else if (alumno.Direcciones.get(0).getIdDireccion() == 0) {
+
+                //alumnoDAOImplementation.AddDireccion()
+            } else {
+
+                //alumnoDAOImplementation.updateDireccion
             }
         }
-        
-        
-    return "redirect:/AlumnoIndex";
+
+        return "redirect:/AlumnoIndex";
+    }
+
+    @GetMapping("CargaMasiva")
+    public String CargaMasiva() {
+        return "CargaMasiva";
+    }
+
+    @PostMapping("CargaMasiva")
+    public String CargaMasiva(@ModelAttribute MultipartFile archivo) throws IOException {
+        String extencion = archivo.getOriginalFilename().split("\\.")[1];
+
+        String path = System.getProperty("user.dir");
+        String pathArchivo = "src\\main\\resources\\archivos";
+        String fecha = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMddHHmmss"));
+        String rutaabsoluta = path + "/" + pathArchivo + "/" + fecha + archivo.getOriginalFilename();
+
+        archivo.transferTo(new File(rutaabsoluta));
+
+        List<Alumno> alumnos;
+
+        if (extencion.equals("txt")) {
+            //lectura de un archivo txt
+            alumnos = LecturaArchivo(archivo);
+        } else {
+            //lectura de una arhivo xlxs
+        }
+
+        return "AlumnoIndex";
+    }
+
+    public List<Alumno> LecturaArchivo(MultipartFile archivo) {
+
+        try (InputStream inputStream = archivo.getInputStream(); BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream))) {
+
+            bufferedReader.readLine();
+            String line;
+            while ((line = bufferedReader.readLine()) != null) {
+                String[] datos = line.split("\\|");
+
+                Alumno alumno = new Alumno();
+                alumno.setNombre(datos[0]);
+
+                System.out.println("leyendo datos: " + line);
+            }
+
+        } catch (Exception ex) {
+            System.out.println(ex.getLocalizedMessage());
+        }
+
+        return null;
     }
 
 }
