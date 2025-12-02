@@ -20,6 +20,9 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.xssf.usermodel.XSSFSheet;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -38,7 +41,7 @@ import org.springframework.web.multipart.MultipartFile;
 @Controller // sirve para mapear interacciones del usuario 
 @RequestMapping("alumno")
 public class AlumnoController {
-    
+
     @Autowired // Inyección de dependencias (field injection)
     private AlumnoDAOIMplementation alumnoDAOImplementation;
 
@@ -53,7 +56,7 @@ public class AlumnoController {
 
     @Autowired
     private MunicipioDAOImplemetation municipioDAOImplemetation;
-    
+
     @Autowired
     private ValidationService validatorService;
 
@@ -204,7 +207,7 @@ public class AlumnoController {
     }
 
     @PostMapping("CargaMasiva")
-    public String CargaMasiva(@ModelAttribute MultipartFile archivo) throws IOException {
+    public String CargaMasiva(@ModelAttribute MultipartFile archivo, Model model) throws IOException {
         String extencion = archivo.getOriginalFilename().split("\\.")[1];
 
         String path = System.getProperty("user.dir");
@@ -219,26 +222,27 @@ public class AlumnoController {
             //lectura de un archivo txt
             alumnos = LecturaArchivo(archivo);
         } else {
-            //lectura de una arhivo xlxs
+            alumnos = LecturaArchivoExcel(archivo);
         }
-        
+
         List<ErrorCarga> errores = ValidarDatosTxt(alumnos);
-        
-        if(errores!= null || errores.isEmpty()){
-            //Retornar vista sin errores
-        }else{
-            
+
+        if (errores.isEmpty()) {
+            model.addAttribute("Iserror", false);
+        } else {
+
+            model.addAttribute("Iserror", true);
+            model.addAttribute("errores", errores);
             //retornar la lista de errores a la vista
         }
-        
-        
-        return "AlumnoIndex";
+
+        return "CargaMasiva";
     }
 
     public List<Alumno> LecturaArchivo(MultipartFile archivo) {
 
         List<Alumno> alumnos = new ArrayList<>();
-        
+
         try (InputStream inputStream = archivo.getInputStream(); BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream));) {
 
             bufferedReader.readLine();
@@ -250,7 +254,7 @@ public class AlumnoController {
                 alumno.setNombre(datos[0]);
                 alumno.setApellidoPaterno(datos[1]);
                 alumno.setApellidoMaterno(datos[2]);
-                
+
                 alumnos.add(alumno);
             }
 
@@ -260,19 +264,40 @@ public class AlumnoController {
 
         return alumnos;
     }
-    
+
+    public List<Alumno> LecturaArchivoExcel(MultipartFile archivo) {
+
+        List<Alumno> alumnos = new ArrayList<>();
+
+        try (XSSFWorkbook workbook = new XSSFWorkbook(archivo.getInputStream())) {
+            XSSFSheet sheet = workbook.getSheetAt(0);
+
+            for (Row row : sheet) {
+                Alumno alumno = new Alumno();
+                alumno.setNombre(row.getCell(0).toString());
+                alumno.setApellidoPaterno(row.getCell(1).toString());
+                alumno.setApellidoMaterno(row.getCell(2).toString());
+                alumnos.add(alumno);
+            }
+        } catch (Exception ex) {
+            alumnos = null;
+        }
+
+        return alumnos;
+
+    }
+
     //Validacion 
-    
-    public List<ErrorCarga> ValidarDatosTxt(List<Alumno> alumnos){
-        
+    public List<ErrorCarga> ValidarDatosTxt(List<Alumno> alumnos) {
+
         List<ErrorCarga> erroresCarga = new ArrayList<>();
         int LineaError = 0;
-        
+
         for (Alumno alumno : alumnos) {
             LineaError++;
             BindingResult bindingResult = validatorService.validateObjects(alumno);
             List<ObjectError> errors = bindingResult.getAllErrors();
-            
+
             for (ObjectError error : errors) {
                 FieldError fieldError = (FieldError) error;
                 ErrorCarga errorCarga = new ErrorCarga();
@@ -280,14 +305,11 @@ public class AlumnoController {
                 errorCarga.Campo = fieldError.getField();
                 errorCarga.Descripcion = fieldError.getDefaultMessage();
                 erroresCarga.add(errorCarga);
-                
+
             }
         }
-        
-        
-        
         return erroresCarga;
-        
+
     }
 
 }

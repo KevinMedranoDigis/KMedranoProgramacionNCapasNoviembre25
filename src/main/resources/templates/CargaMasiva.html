@@ -45,7 +45,7 @@
                         <tbody>
                             <tr th:each="error :${listaErrores}">
                                 <td th:text="${error.Fila}"></td> 
-                                <td th:text="${error.Mensaje}"></td> 
+                                <td th:text="${error.campo}"></td> 
                                 <td th:text="${error.Descripcion}"></td> 
                             </tr>
                         </tbody>
