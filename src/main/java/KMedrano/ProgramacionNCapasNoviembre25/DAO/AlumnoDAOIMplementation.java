@@ -5,12 +5,15 @@ import KMedrano.ProgramacionNCapasNoviembre25.ML.Colonia;
 import KMedrano.ProgramacionNCapasNoviembre25.ML.Direccion;
 import KMedrano.ProgramacionNCapasNoviembre25.ML.Result;
 import KMedrano.ProgramacionNCapasNoviembre25.ML.Semestre;
+import java.sql.CallableStatement;
 import java.sql.ResultSet;
 import java.util.ArrayList;
+import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.CallableStatementCallback;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 @Repository // Lógica de base de datos
 public class AlumnoDAOIMplementation implements IAlumno {
@@ -211,6 +214,35 @@ public class AlumnoDAOIMplementation implements IAlumno {
             result.ex = ex;
         }
 
+        return result;
+    }
+    
+    @Transactional(rollbackFor = Exception.class)
+    @Override
+    public Result AddAll(List<Alumno> alumnos){
+        
+        Result result = new Result();
+        
+        try{
+            
+            jdbcTemplate.batchUpdate("{CALL AddAlumno(?,?,?,?,?,?)}", alumnos, alumnos.size(), (CallableStatement, alumno)  ->{
+                
+                CallableStatement.setString(1, alumno.getNombre());
+                CallableStatement.setString(2, alumno.getApellidoPaterno());
+                CallableStatement.setString(3, alumno.getApellidoMaterno());
+                
+                CallableStatement.execute();
+                
+            });  
+        }
+        catch(Exception ex){
+            result.Correct = false;
+            result.ErrorMessage = ex.getLocalizedMessage();
+        }
+        
+        
+        
+        
         return result;
     }
 

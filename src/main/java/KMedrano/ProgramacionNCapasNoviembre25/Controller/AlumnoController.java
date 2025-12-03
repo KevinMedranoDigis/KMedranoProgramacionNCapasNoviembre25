@@ -16,6 +16,7 @@ import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -223,7 +224,7 @@ public class AlumnoController {
 
         if (extencion.equals("txt")) {
             //lectura de un archivo txt
-            alumnos = LecturaArchivo(archivo);
+            alumnos = LecturaArchivo(new File(rutaabsoluta));
         } else {
             alumnos = LecturaArchivoExcel(new File(rutaabsoluta));
         }
@@ -243,11 +244,11 @@ public class AlumnoController {
         return "CargaMasiva";
     }
 
-    public List<Alumno> LecturaArchivo(MultipartFile archivo) {
+    public List<Alumno> LecturaArchivo(File archivo) {
 
         List<Alumno> alumnos = new ArrayList<>();
 
-        try (InputStream inputStream = archivo.getInputStream(); BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream));) {
+        try ( BufferedReader bufferedReader = new BufferedReader(new FileReader(archivo));) {
 
             bufferedReader.readLine();
             String line = "";
@@ -342,7 +343,11 @@ public class AlumnoController {
       // alumnos =  LecturaArchivoExcel(new File(path));
        sesion.removeAttribute("archivoCargaMasiva");
         //Proceso de guardado
-        //leer el archivo
+        //leer el 
+        File archivo = new File(path);
+        String extension = archivo.getName();
+        
+        //validacion de extension (xlsx o txt)
         
         
         return "AlumnoIndex";

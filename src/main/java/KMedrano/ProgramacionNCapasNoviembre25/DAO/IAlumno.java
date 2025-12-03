@@ -3,6 +3,7 @@ package KMedrano.ProgramacionNCapasNoviembre25.DAO;
 
 import KMedrano.ProgramacionNCapasNoviembre25.ML.Alumno;
 import KMedrano.ProgramacionNCapasNoviembre25.ML.Result;
+import java.util.List;
 
 
 
@@ -17,6 +18,8 @@ public interface IAlumno {
     public Result GetByIdDirecciones(int IdAlumno);
     
     public Result GetById(int IdAlumno);
+    
+    public Result AddAll(List<Alumno> alumnos);
     
     
     
