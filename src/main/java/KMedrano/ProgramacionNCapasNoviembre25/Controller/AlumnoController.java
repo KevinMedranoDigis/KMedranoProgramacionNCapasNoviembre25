@@ -10,9 +10,12 @@ import KMedrano.ProgramacionNCapasNoviembre25.ML.Colonia;
 import KMedrano.ProgramacionNCapasNoviembre25.ML.Direccion;
 import KMedrano.ProgramacionNCapasNoviembre25.ML.ErrorCarga;
 import KMedrano.ProgramacionNCapasNoviembre25.ML.Result;
+import KMedrano.ProgramacionNCapasNoviembre25.ML.Semestre;
 import KMedrano.ProgramacionNCapasNoviembre25.Service.ValidationService;
+import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -207,7 +210,7 @@ public class AlumnoController {
     }
 
     @PostMapping("CargaMasiva")
-    public String CargaMasiva(@ModelAttribute MultipartFile archivo, Model model) throws IOException {
+    public String CargaMasiva(@ModelAttribute MultipartFile archivo, Model model, HttpSession session) throws IOException {
         String extencion = archivo.getOriginalFilename().split("\\.")[1];
 
         String path = System.getProperty("user.dir");
@@ -215,24 +218,25 @@ public class AlumnoController {
         String fecha = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMddHHmmss"));
         String rutaabsoluta = path + "/" + pathArchivo + "/" + fecha + archivo.getOriginalFilename();
 
-        //archivo.transferTo(new File(rutaabsoluta));
+        archivo.transferTo(new File(rutaabsoluta));
         List<Alumno> alumnos = new ArrayList<>();
 
         if (extencion.equals("txt")) {
             //lectura de un archivo txt
             alumnos = LecturaArchivo(archivo);
         } else {
-            alumnos = LecturaArchivoExcel(archivo);
+            alumnos = LecturaArchivoExcel(new File(rutaabsoluta));
         }
 
         List<ErrorCarga> errores = ValidarDatosTxt(alumnos);
 
         if (errores.isEmpty()) {
-            model.addAttribute("Iserror", false);
+            model.addAttribute("listaErrores", errores);
+            session.setAttribute("archivoCargaMasiva", rutaabsoluta); //path guardado en sesion
         } else {
 
-            model.addAttribute("Iserror", true);
-            model.addAttribute("errores", errores);
+            //   model.addAttribute("listaRrrores", true);
+            model.addAttribute("listaErrores", errores);
             //retornar la lista de errores a la vista
         }
 
@@ -265,11 +269,11 @@ public class AlumnoController {
         return alumnos;
     }
 
-    public List<Alumno> LecturaArchivoExcel(MultipartFile archivo) {
+    public List<Alumno> LecturaArchivoExcel(File archivo) {
 
         List<Alumno> alumnos = new ArrayList<>();
 
-        try (XSSFWorkbook workbook = new XSSFWorkbook(archivo.getInputStream())) {
+        try (XSSFWorkbook workbook = new XSSFWorkbook(archivo)) {
             XSSFSheet sheet = workbook.getSheetAt(0);
 
             for (Row row : sheet) {
@@ -277,6 +281,12 @@ public class AlumnoController {
                 alumno.setNombre(row.getCell(0).toString());
                 alumno.setApellidoPaterno(row.getCell(1).toString());
                 alumno.setApellidoMaterno(row.getCell(2).toString());
+                alumno.Semestre = new Semestre();
+
+                int idRol = Integer.parseInt(row.getCell(5).toString());
+                alumno.Semestre.setIdSemestre(idRol);
+
+                alumno.Semestre.setIdSemestre(idRol);
                 alumnos.add(alumno);
             }
         } catch (Exception ex) {
@@ -289,15 +299,28 @@ public class AlumnoController {
 
     //Validacion 
     public List<ErrorCarga> ValidarDatosTxt(List<Alumno> alumnos) {
-
         List<ErrorCarga> erroresCarga = new ArrayList<>();
         int LineaError = 0;
 
+      
+        
         for (Alumno alumno : alumnos) {
+            
+              List<ObjectError> errors = new ArrayList<>();
+            
             LineaError++;
-            BindingResult bindingResult = validatorService.validateObjects(alumno);
-            List<ObjectError> errors = bindingResult.getAllErrors();
-
+            BindingResult bindingResultAlumno = validatorService.validateObjects(alumno);
+            if(bindingResultAlumno.hasErrors()){
+                errors.addAll(bindingResultAlumno.getAllErrors());
+            }
+            
+            if(alumno.Semestre != null){
+                BindingResult bindingSemestre = validatorService.validateObjects(alumno.Semestre);
+                if(bindingSemestre.hasErrors()){
+                    errors.addAll(bindingSemestre.getAllErrors());
+                }
+            }
+             
             for (ObjectError error : errors) {
                 FieldError fieldError = (FieldError) error;
                 ErrorCarga errorCarga = new ErrorCarga();
@@ -309,7 +332,19 @@ public class AlumnoController {
             }
         }
         return erroresCarga;
-
     }
-
+    
+    @GetMapping("/CargaMasiva/procesar")
+    public String ProcesarArchivo(HttpSession sesion){
+     String path =   sesion.getAttribute("archivoCargaMasiva").toString();
+        System.out.println(path);
+       
+      // alumnos =  LecturaArchivoExcel(new File(path));
+       sesion.removeAttribute("archivoCargaMasiva");
+        //Proceso de guardado
+        //leer el archivo
+        
+        
+        return "AlumnoIndex";
+    }
 }
