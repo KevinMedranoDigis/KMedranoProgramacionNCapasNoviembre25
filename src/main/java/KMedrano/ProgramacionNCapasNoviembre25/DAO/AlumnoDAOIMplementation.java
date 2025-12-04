@@ -231,8 +231,7 @@ public class AlumnoDAOIMplementation implements IAlumno {
                 CallableStatement.setString(2, alumno.getApellidoPaterno());
                 CallableStatement.setString(3, alumno.getApellidoMaterno());
                 
-                CallableStatement.execute();
-                
+                //no usar execute           
             });  
         }
         catch(Exception ex){
