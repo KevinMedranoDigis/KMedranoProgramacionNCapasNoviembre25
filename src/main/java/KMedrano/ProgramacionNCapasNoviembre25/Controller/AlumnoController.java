@@ -68,8 +68,11 @@ public class AlumnoController {
     public String GetAll(Model model) {
 
         Result result = alumnoDAOImplementation.GetAll();
+        Result resultSemestres = semestreDAOImplementation.GetAll();
         //model -> me permite cargar información desde el backend en la parte del front
         model.addAttribute("Alumnos", result.Objects);
+        model.addAttribute("semestres", resultSemestres.Objects);
+        model.addAttribute("alumnoBusqueda", new Alumno());
 
         return "AlumnoIndex"; // -> Busca una vista que se llame Index
     }
@@ -352,4 +355,16 @@ public class AlumnoController {
         
         return "AlumnoIndex";
     }
+    
+    @PostMapping("/GetAllDinamico")
+    public String GetAllDinamico(@ModelAttribute Alumno alumno, Model model){
+        
+        model.addAttribute("alumnoBusqueda", new Alumno());
+        model.addAttribute("semestres", semestreDAOImplementation.GetAll().Objects);
+        model.addAttribute("Alumnos", alumnoDAOImplementation.GetAllDinamico(alumno).Objects);
+        
+        return "AlumnoIndex";
+    }
+    
+    
 }

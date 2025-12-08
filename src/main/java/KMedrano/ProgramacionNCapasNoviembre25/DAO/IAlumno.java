@@ -21,6 +21,6 @@ public interface IAlumno {
     
     public Result AddAll(List<Alumno> alumnos);
     
-    
-    
+    public Result GetAllDinamico(Alumno alumno);
+        
 }

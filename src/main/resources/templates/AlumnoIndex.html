@@ -13,6 +13,40 @@
 
             <br/>
             <br/>
+            
+            <form th:action="@{/alumno/GetAllDinamico}" method="post" th:object="${alumnoBusqueda}">
+
+                <div class="row">
+
+                    <div class="row col-8">
+                        <div class="col">
+                            <label for="NombreAlumno" class="form-label fw-bold">Nombre</label>
+                            <input id="NombreAlumno" type="text" class="form-control" placeholder="Nombre" th:field="*{Nombre}">
+
+                        </div>
+                        <div class="col">
+                            <label for="ApellidoPaternoAlumno" class="form-label fw-bold">Apellido Paterno</label>
+                            <input id="ApellidoPaternoAlumno" type="text" class="form-control" placeholder="Apellido Paterno" th:field="*{ApellidoPaterno}" >
+                            <span id="ApellidoPaternoAlumnoError" class="text-danger"></span>
+                        </div>
+                        <div class="col">
+                            <label for="ApellidoMaternoAlumno" class="form-label fw-bold">Apellido Materno</label>
+                            <input id="ApellidoMaternoAlumno" type="text" class="form-control" placeholder="Apellido Materno" th:field="*{ApellidoMaterno}">
+                        </div>
+                    </div>
+                    <div class="row col-4">
+                        <label for="semestreAlumno" class="form-label fw-bold">Semestre</label>
+                        <select id="semestreAlumno" class="form-select" aria-label="Default select example" th:field="*{Semestre.IdSemestre}">
+                            <option value=0 selected>Selecciona un semestre</option>
+                            <option th:each="semestre : ${semestres}" th:value="${semestre.IdSemestre}" th:text="${semestre.Nombre}">One</option>
+                        </select>
+                    </div>
+                </div>
+                <button type="submit" class="btn btn-success mt-4 w-100 fw-bold" >Buscar</button>
+            </form>
+            
+                <br/>
+                
             <a th:href="@{/alumno/form/0}" class="btn btn-success">New user</a>
 
             <table class="table table-hover table-striped">
