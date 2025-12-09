@@ -1,6 +1,7 @@
 package KMedrano.ProgramacionNCapasNoviembre25.Controller;
 
 import KMedrano.ProgramacionNCapasNoviembre25.DAO.AlumnoDAOIMplementation;
+import KMedrano.ProgramacionNCapasNoviembre25.DAO.AlumnoJPADAOImplementation;
 import KMedrano.ProgramacionNCapasNoviembre25.DAO.EstadoDAOImplementation;
 import KMedrano.ProgramacionNCapasNoviembre25.DAO.MunicipioDAOImplemetation;
 import KMedrano.ProgramacionNCapasNoviembre25.DAO.PaisDAOImplementation;
@@ -48,6 +49,9 @@ public class AlumnoController {
 
     @Autowired // Inyección de dependencias (field injection)
     private AlumnoDAOIMplementation alumnoDAOImplementation;
+    
+    @Autowired
+    private AlumnoJPADAOImplementation alumnoJPADAOImplementation;
 
     @Autowired
     private SemestreDAOImplementation semestreDAOImplementation;
@@ -67,6 +71,8 @@ public class AlumnoController {
     @GetMapping // responder a interacciones de usuario
     public String GetAll(Model model) {
 
+        alumnoJPADAOImplementation.GetAll();
+        
         Result result = alumnoDAOImplementation.GetAll();
         Result resultSemestres = semestreDAOImplementation.GetAll();
         //model -> me permite cargar información desde el backend en la parte del front

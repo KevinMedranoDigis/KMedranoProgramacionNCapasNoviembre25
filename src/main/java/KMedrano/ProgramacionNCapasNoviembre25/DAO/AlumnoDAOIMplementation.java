@@ -241,7 +241,7 @@ public class AlumnoDAOIMplementation implements IAlumno {
     public Result GetAllDinamico(Alumno alumno) {
       
         Result result =new Result();
-       
+         
         try {
             
             jdbcTemplate.execute("{CALL BusquedaAlumnoDireccionGetAll (?,?,?) }", (CallableStatementCallback<Boolean>) callableStatement ->{
@@ -252,7 +252,7 @@ public class AlumnoDAOIMplementation implements IAlumno {
                 callableStatement.execute();
                 
                 ResultSet resultSet = (ResultSet) callableStatement.getObject(3);
-                
+                    
                result.Objects = new ArrayList<>();
 
                 while (resultSet.next()) {
