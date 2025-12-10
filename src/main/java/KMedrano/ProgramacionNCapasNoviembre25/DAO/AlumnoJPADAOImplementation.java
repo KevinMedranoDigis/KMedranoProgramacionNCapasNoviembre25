@@ -22,7 +22,7 @@ public class AlumnoJPADAOImplementation implements IAlumnoJPA {
 
     @Autowired
     private ModelMapper modelMapper;
-            
+
     @Override
     public Result GetAll() {
         //JPQL - para consulta de datos 
@@ -32,12 +32,10 @@ public class AlumnoJPADAOImplementation implements IAlumnoJPA {
         Result result = new Result();
 
         //ModelMapper model = new ModelMapper();
-
         result.Objects = new ArrayList<>();
         for (Alumno alumno : alumnos) {
-            
-          //  KMedrano.ProgramacionNCapasNoviembre25.ML.Alumno alumnoMLDos = new KMedrano.ProgramacionNCapasNoviembre25.ML.Alumno(alumno);
-            
+
+            //  KMedrano.ProgramacionNCapasNoviembre25.ML.Alumno alumnoMLDos = new KMedrano.ProgramacionNCapasNoviembre25.ML.Alumno(alumno);
             KMedrano.ProgramacionNCapasNoviembre25.ML.Alumno alumnoML = modelMapper.map(alumno, KMedrano.ProgramacionNCapasNoviembre25.ML.Alumno.class);
 
             result.Objects.add(alumnoML);
@@ -53,22 +51,36 @@ public class AlumnoJPADAOImplementation implements IAlumnoJPA {
     @Transactional
     @Override
     public Result Add(Alumno alumno) {
-      Result result = new Result();
-      
+        Result result = new Result();
+
         try {
-            
+
             entityManager.persist(alumno);
+            alumno.Direcciones.get(0).Alumno = new Alumno();
+            alumno.Direcciones.get(0).Alumno.setIdAlumno(alumno.getIdAlumno());
+            entityManager.persist(alumno.Direcciones.get(0));
+            
             //guardar la direccion
-            
-            
+
         } catch (Exception ex) {
             result.Correct = false;
             result.ErrorMessage = ex.getLocalizedMessage();
             result.ex = ex;
         }
-      
-      
-      return result;
+
+        return result;
     }
+
+    //Transactional
+    //override
+    public Result Update(KMedrano.ProgramacionNCapasNoviembre25.ML.Alumno alumnoML){
+         
+    //verificar si existe en la base de datos
+   Alumno alumnoDb = entityManager.find(Alumno.class, alumnoML.getIdAlumno());
     
+    //mapear el ML Alumno a un JPA Alumno
+    //  hacer merge
+    
+    return new Result();
+    }
 }
