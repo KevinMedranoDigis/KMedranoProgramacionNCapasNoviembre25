@@ -1,8 +1,11 @@
 package KMedrano.ProgramacionNCapasNoviembre25.JPA;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -21,7 +24,7 @@ public class Alumno {
     //
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "idalumno")
+    @Column(name = "idalumno") 
     private int IdAlumno;
     
     @Column(name = "nombre")
@@ -30,8 +33,26 @@ public class Alumno {
     @ManyToOne
     @JoinColumn(name = "idsemestre")
     public Semestre Semestre; // FK
-            
-    @OneToMany(mappedBy = "Alumno", cascade = CascadeType.ALL, orphanRemoval = true)
+     
+    @OneToMany(mappedBy = "Alumno", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     public List<Direccion> Direcciones = new ArrayList<>();
+
+    public int getIdAlumno() {
+        return IdAlumno;
+    }
+
+    public void setIdAlumno(int IdAlumno) {
+        this.IdAlumno = IdAlumno;
+    }
+
+    public String getNombre() {
+        return Nombre;
+    }
+
+    public void setNombre(String Nombre) {
+        this.Nombre = Nombre;
+    }
+    
+    
     
 }

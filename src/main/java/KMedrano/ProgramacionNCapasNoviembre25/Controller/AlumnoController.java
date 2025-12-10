@@ -71,9 +71,9 @@ public class AlumnoController {
     @GetMapping // responder a interacciones de usuario
     public String GetAll(Model model) {
 
-        alumnoJPADAOImplementation.GetAll();
+        Result result = alumnoJPADAOImplementation.GetAll();
         
-        Result result = alumnoDAOImplementation.GetAll();
+       // Result result = alumnoDAOImplementation.GetAll();
         Result resultSemestres = semestreDAOImplementation.GetAll();
         //model -> me permite cargar información desde el backend en la parte del front
         model.addAttribute("Alumnos", result.Objects);

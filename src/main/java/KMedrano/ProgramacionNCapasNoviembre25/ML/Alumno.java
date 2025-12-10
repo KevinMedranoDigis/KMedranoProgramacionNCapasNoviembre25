@@ -28,6 +28,10 @@ public class Alumno {
     public Semestre Semestre;
     public List<Direccion> Direcciones;
     
+//    public Alumno(KMedrano.ProgramacionNCapasNoviembre25.JPA.Alumno alumnoJPA){
+//        this.IdAlumno = alumnoJPA.getIdAlumno();
+//        this.Nombre = alumnoJPA.getNombre();
+//    }
 
     public int getIdAlumno() {
         return IdAlumno;
