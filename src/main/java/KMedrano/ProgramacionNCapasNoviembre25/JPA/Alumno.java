@@ -29,6 +29,18 @@ public class Alumno {
     
     @Column(name = "nombre")
     private String Nombre;
+
+    @Column(name = "apellidopaterno")
+    private String ApellidoPaterno;
+    
+    @Column(name = "apellidomaterno")
+    private String ApellidoMaterno;
+    
+    @Column(name = "email")
+    private String Email;
+     
+    @Column(name = "password")
+    private String Password;
     
     @ManyToOne
     @JoinColumn(name = "idsemestre")
@@ -52,7 +64,55 @@ public class Alumno {
     public void setNombre(String Nombre) {
         this.Nombre = Nombre;
     }
+
+    public String getApellidoPaterno() {
+        return ApellidoPaterno;
+    }
+
+    public void setApellidoPaterno(String ApellidoPaterno) {
+        this.ApellidoPaterno = ApellidoPaterno;
+    }
+
+    public String getApellidoMaterno() {
+        return ApellidoMaterno;
+    }
+
+    public void setApellidoMaterno(String ApellidoMaterno) {
+        this.ApellidoMaterno = ApellidoMaterno;
+    }
+
+    public String getEmail() {
+        return Email;
+    }
+
+    public void setEmail(String Email) {
+        this.Email = Email;
+    }
+
+    public String getPassword() {
+        return Password;
+    }
+
+    public void setPassword(String Password) {
+        this.Password = Password;
+    }
+
+    public Semestre getSemestre() {
+        return Semestre;
+    }
+
+    public void setSemestre(Semestre Semestre) {
+        this.Semestre = Semestre;
+    }
+
+    public List<Direccion> getDirecciones() {
+        return Direcciones;
+    }
+
+    public void setDirecciones(List<Direccion> Direcciones) {
+        this.Direcciones = Direcciones;
+    }
     
     
-    
+        
 }

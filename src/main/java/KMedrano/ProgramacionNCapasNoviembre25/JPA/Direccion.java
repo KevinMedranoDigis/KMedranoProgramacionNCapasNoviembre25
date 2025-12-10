@@ -22,6 +22,16 @@ public class Direccion {
     @Column(name = "calle")
     private String Calle;
     
+    @Column(name = "numerointerior")
+    private String NumeroInterior;
+    
+    @Column(name = "numeroexterior")
+    private String NumeroExterior;
+    
+    @ManyToOne
+    @JoinColumn(name = "idcolonia")
+    public Colonia Colonia;
+    
     @ManyToOne(fetch=FetchType.LAZY)
     @JoinColumn(name = "idalumno")
     public Alumno Alumno;
@@ -49,6 +59,31 @@ public class Direccion {
     public void setAlumno(Alumno Alumno) {
         this.Alumno = Alumno;
     }
+
+    public String getNumeroInterior() {
+        return NumeroInterior;
+    }
+
+    public void setNumeroInterior(String NumeroInterior) {
+        this.NumeroInterior = NumeroInterior;
+    }
+
+    public String getNumeroExterior() {
+        return NumeroExterior;
+    }
+
+    public void setNumeroExterior(String NumeroExterior) {
+        this.NumeroExterior = NumeroExterior;
+    }
+
+    public Colonia getColonia() {
+        return Colonia;
+    }
+
+    public void setColonia(Colonia Colonia) {
+        this.Colonia = Colonia;
+    }
+
     
     
 }

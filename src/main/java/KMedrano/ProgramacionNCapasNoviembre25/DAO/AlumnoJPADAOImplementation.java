@@ -12,6 +12,7 @@ import org.modelmapper.ModelMapper;
 import org.modelmapper.convention.MatchingStrategies;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 @Repository
 public class AlumnoJPADAOImplementation implements IAlumnoJPA {
@@ -49,4 +50,25 @@ public class AlumnoJPADAOImplementation implements IAlumnoJPA {
         return result;
     }
 
+    @Transactional
+    @Override
+    public Result Add(Alumno alumno) {
+      Result result = new Result();
+      
+        try {
+            
+            entityManager.persist(alumno);
+            //guardar la direccion
+            
+            
+        } catch (Exception ex) {
+            result.Correct = false;
+            result.ErrorMessage = ex.getLocalizedMessage();
+            result.ex = ex;
+        }
+      
+      
+      return result;
+    }
+    
 }

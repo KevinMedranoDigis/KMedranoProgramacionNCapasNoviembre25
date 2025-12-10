@@ -28,6 +28,7 @@ import java.util.List;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -67,7 +68,7 @@ public class AlumnoController {
 
     @Autowired
     private ValidationService validatorService;
-
+    
     @GetMapping // responder a interacciones de usuario
     public String GetAll(Model model) {
 
@@ -195,7 +196,12 @@ public class AlumnoController {
 
         if (alumno.getIdAlumno() == 0) {
 
-            //alumnoDAOImplementation.AddAlumnoDireccion()
+        ModelMapper modelMapper = new ModelMapper();
+        
+        KMedrano.ProgramacionNCapasNoviembre25.JPA.Alumno alumnoJPA = modelMapper.map(alumno, KMedrano.ProgramacionNCapasNoviembre25.JPA.Alumno.class);
+        
+        Result resultadd = alumnoJPADAOImplementation.Add(alumnoJPA);
+        
             System.out.println("Estoy agregando alumno");
         } else {
             if (alumno.Direcciones.get(0).getIdDireccion() == -1) {
