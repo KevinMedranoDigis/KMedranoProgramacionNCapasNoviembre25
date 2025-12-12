@@ -129,43 +129,33 @@ public class AlumnoDAOIMplementation implements IAlumno {
             callableStatement.execute();
 
             ResultSet resultSet = (ResultSet) callableStatement.getObject(2);
-            result.Objects = new ArrayList<>();
 
-            while (resultSet.next()) {
-                int IdAlumnoPorIngresar = resultSet.getInt("IdAlumno");
+            if (resultSet.next()) {
+                Alumno alumno = new Alumno();
+                alumno.setNombre(resultSet.getString("Nombre"));
 
-                if (!result.Objects.isEmpty() && ((Alumno) result.Objects.get(result.Objects.size() - 1)).getIdAlumno() == IdAlumnoPorIngresar) {
-
-                    Direccion direccion = new KMedrano.ProgramacionNCapasNoviembre25.ML.Direccion();
-                    direccion.setCalle(resultSet.getString("Calle"));
-                    direccion.setNumeroInterior(resultSet.getString("NumeroInterior"));
-                    direccion.Colonia = new Colonia();
-                    direccion.Colonia.setIdColonia(resultSet.getInt("IdColonia"));
-                    direccion.Colonia.setNombre(resultSet.getString("NombreColonia"));
-                    Alumno alumno = ((Alumno) result.Objects.get(result.Objects.size() - 1));
-                    alumno.Direcciones.add(direccion);
-
-                } else {
-
-                    Alumno alumno = new Alumno();
-                    alumno.setIdAlumno(IdAlumnoPorIngresar);
-                    alumno.setNombre(resultSet.getString("Nombre"));
-                    int IdDireccion = resultSet.getInt("IdDireccion");
-                    if (IdDireccion != 0) {
-                        alumno.Direcciones = new ArrayList<>();
-                        Direccion direccion = new Direccion();
-                        direccion.setIdDireccion(IdDireccion);
+                int idDireccion = resultSet.getInt("IdDireccion"); // null -> 0
+               
+                if (idDireccion != 0) {
+                
+                    alumno.Direcciones = new ArrayList<>();
+                    
+                    do {
+                        Direccion direccion = new KMedrano.ProgramacionNCapasNoviembre25.ML.Direccion();
                         direccion.setCalle(resultSet.getString("Calle"));
                         direccion.setNumeroInterior(resultSet.getString("NumeroInterior"));
                         direccion.Colonia = new Colonia();
                         direccion.Colonia.setIdColonia(resultSet.getInt("IdColonia"));
                         direccion.Colonia.setNombre(resultSet.getString("NombreColonia"));
                         alumno.Direcciones.add(direccion);
-                    }
+                    } while (resultSet.next());
 
-                    result.Objects.add(alumno);
                 }
+
+                result.Correct = true;
+                result.Object = alumno;
             }
+
             return true;
         });
 
@@ -239,21 +229,21 @@ public class AlumnoDAOIMplementation implements IAlumno {
 
     @Override
     public Result GetAllDinamico(Alumno alumno) {
-      
-        Result result =new Result();
-         
+
+        Result result = new Result();
+
         try {
-            
-            jdbcTemplate.execute("{CALL BusquedaAlumnoDireccionGetAll (?,?,?) }", (CallableStatementCallback<Boolean>) callableStatement ->{
+
+            jdbcTemplate.execute("{CALL BusquedaAlumnoDireccionGetAll (?,?,?) }", (CallableStatementCallback<Boolean>) callableStatement -> {
                 callableStatement.setString(1, alumno.getNombre());
                 callableStatement.setInt(2, alumno.Semestre.getIdSemestre());
                 callableStatement.registerOutParameter(3, java.sql.Types.REF_CURSOR);
-                
+
                 callableStatement.execute();
-                
+
                 ResultSet resultSet = (ResultSet) callableStatement.getObject(3);
-                    
-               result.Objects = new ArrayList<>();
+
+                result.Objects = new ArrayList<>();
 
                 while (resultSet.next()) {
                     int IdAlumnoPorIngresar = resultSet.getInt("IdAlumno");
@@ -290,7 +280,7 @@ public class AlumnoDAOIMplementation implements IAlumno {
                         result.Objects.add(alumnoBusqueda);
                     }
                 }
-                
+
                 return true;
             });
 
@@ -299,9 +289,8 @@ public class AlumnoDAOIMplementation implements IAlumno {
             result.ErrorMessage = ex.getLocalizedMessage();
             result.ex = ex;
         }
-        
-       
-       return result;
+
+        return result;
     }
 
 }

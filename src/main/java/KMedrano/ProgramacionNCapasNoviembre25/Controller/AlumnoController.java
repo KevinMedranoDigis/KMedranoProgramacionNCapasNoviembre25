@@ -119,7 +119,9 @@ public class AlumnoController {
 
         //consulta de un usuario con sus direcciones
         Result result = alumnoDAOImplementation.GetByIdDirecciones(IdAlumno);
-        model.addAttribute("Alumno", result.Objects);
+        Result resultSemestres = semestreDAOImplementation.GetAll();
+        model.addAttribute("Alumno", result.Object);
+        model.addAttribute("Semestres",resultSemestres.Objects); 
 
         return "AlumnoDetail";
     }
@@ -206,7 +208,7 @@ public class AlumnoController {
         } else {
             if (alumno.Direcciones.get(0).getIdDireccion() == -1) {
 
-                // Result result = alumnoJPADAOImplementation.Update(alumno);
+                 Result result = alumnoJPADAOImplementation.Update(alumno);
                  
                  
                 System.out.println("Estoy actualizando alumno");
@@ -375,7 +377,12 @@ public class AlumnoController {
         
         model.addAttribute("alumnoBusqueda", new Alumno());
         model.addAttribute("semestres", semestreDAOImplementation.GetAll().Objects);
-        model.addAttribute("Alumnos", alumnoDAOImplementation.GetAllDinamico(alumno).Objects);
+//        model.addAttribute("Alumnos", alumnoDAOImplementation.GetAllDinamico(alumno).Objects);
+        
+        ModelMapper modelMapper = new ModelMapper();
+       KMedrano.ProgramacionNCapasNoviembre25.JPA.Alumno alumnoJPA = modelMapper.map(alumno, KMedrano.ProgramacionNCapasNoviembre25.JPA.Alumno.class);
+
+        //model.addAttribute("Alumnos", alumnoJPADAOImplementation.GetAllDinamico(alumnoJPA).Objects);
         
         return "AlumnoIndex";
     }

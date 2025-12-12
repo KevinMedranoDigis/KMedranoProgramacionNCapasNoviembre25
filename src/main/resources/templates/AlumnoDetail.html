@@ -14,10 +14,11 @@
                     <div class="card">
                         <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTNT31I-b-Jdf8bjPM-mm-V1qCpb-oudRLvtw&s" style="max-height: 250px; object-fit: contain" class="card-img-top" alt="Imagen del usuario">
                         <div class="card-body">
-                            <h3 th:text="|${Alumno[0].Nombre} ${Alumno[0].ApellidoPaterno}|"></h3>
+                            <h3 th:text="|${Alumno.Nombre} ${Alumno.ApellidoPaterno}|"></h3>
                             <p class="card-text" th:text="|Usuario: |"></p>
                             <p class="card-text" th:text="|Email: |"></p>                            
-                            <a class="btn btn-primary col-12" th:href="@{/alumno/formEditable?IdAlumno=}+${Alumno[0].IdAlumno}">Editar Información</a>
+                            <!--<a class="btn btn-primary col-12" th:href="@{/alumno/formEditable?IdAlumno=}+${Alumno.IdAlumno}">Editar Información</a>-->
+                            <a class="btn btn-primary col-12" onclick="ShowModalEditar()" >Editar Información</a>
                         </div>
                     </div>
                 </div>
@@ -29,7 +30,8 @@
                             <h5 class="card-title">Direcciones Asignadas</h5>
 
 
-                            <a class="btn btn-secondary mt-2 col-12" th:href="@{/alumno/formEditable?IdAlumno=}+${Alumno[0].IdAlumno}+'&IdDireccion=0'">Agregar Dirección</a>
+                            <!--<a class="btn btn-secondary mt-2 col-12" th:href="@{/alumno/formEditable?IdAlumno=}+${Alumno.IdAlumno}+'&IdDireccion=0'">Agregar Dirección</a>-->
+                            <button class="btn btn-secondary mt-2 col-12" onclick="modalDireccion(0)">Agregar Dirección</button>
 
                             <br/><br/>
 
@@ -41,10 +43,11 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <tr th:each="direccion : ${Alumno[0].Direcciones}">
+                                    <tr th:each="direccion : ${Alumno.Direcciones}">
                                         <td th:text="${direccion.Calle}"></td>
                                         <td>
-                                            <a class="btn btn-warning btn-sm" th:href="@{/alumno/formEditable?IdAlumno=}+${Alumno[0].IdAlumno}+'&IdDireccion='+${direccion.IdDireccion}">Editar</a>
+                                            <!--<a class="btn btn-warning btn-sm" th:href="@{/alumno/formEditable?IdAlumno=}+${Alumno.IdAlumno}+'&IdDireccion='+${direccion.IdDireccion}">Editar</a>-->
+                                            <button class="btn btn-warning btn-sm" th:onclick="|modalDireccion(${direccion.IdDireccion})|">Editar</button>
                                             <a class="btn btn-danger btn-sm">Borrar</a>
                                         </td>
                                     </tr>
@@ -55,5 +58,111 @@
                 </div>
             </div>
         </div>
+
+
+        <!-- Modal -->
+        <div class="modal" id="modalEdicionUsuario" aria-labelledby="modalEdicionUsuarioLabel" aria-hidden="true">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+
+                    <!-- Header -->
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="modalEdicionUsuarioLabel">Editar Alumno</h5>
+                        <button type="button" class="btn-close" onclick="ShowModalEditar()" aria-label="Cerrar"></button>
+                    </div>
+
+                    <!-- Body -->
+                    <div class="modal-body">
+                        <form th:object="${Alumno}" method="post"   >
+
+                            <div class="mb-3">
+                                <label for="nombre" class="form-label">Nombre</label>
+                                <input type="text" id="nombre" class="form-control" placeholder="Nombre" th:field="*{Nombre}" required>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="apellidoPaterno" class="form-label">Apellido Paterno</label>
+                                <input type="text" id="apellidoPaterno" class="form-control" placeholder="Apellido Paterno" th:field="*{ApellidoPaterno}" required>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="apellidoMaterno" class="form-label">Apellido Materno</label>
+                                <input type="text" id="apellidoMaterno" class="form-control" placeholder="Apellido Materno" th:field="*{ApellidoMaterno}">
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="email" class="form-label">Correo electrónico</label>
+                                <input type="email" id="email" class="form-control" placeholder="Email" th:field="*{Email}" required>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="password" class="form-label">Contraseña</label>
+                                <input type="password" id="password" class="form-control" placeholder="Password" th:field="*{Password}" required>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="semestre" class="form-label">Semestre</label>
+                                <select id="semestre" class="form-select" th:field="*{Semestre.IdSemestre}" required>
+                                    <option value=0>Selecciona un Semestre</option>
+                                    <option th:each="semestre : ${Semestres}" th:text="${semestre.Nombre}" th:value="${semestre.IdSemestre}"></option>
+                                </select>
+                            </div>
+
+                        </form>
+                    </div>
+
+                    <!-- Footer -->
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" onclick="ShowModalEditar()">Cancelar</button>
+                        <button type="submit" class="btn btn-primary">Guardar cambios</button>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+
+        <!--agrega direccion / edita direccion-->
+        <div class="modal hide" id="modaDireccion" > 
+            <div class="modal-header">
+                <a class="close" data-dismiss="modal">×</a>
+                <h3>Add Contact</h3>
+                <div id="errors_notification">
+                </div>
+            </div>
+            <div class="modal-body">
+                <form th:object ="${Direccion}" th:action="@{/usaurio/${IdUsuario}/direccion}">
+                    <input type="hidden" >
+                    <input type="text" placeholder="Nombre" th:field="${Alumno.Nombre}">
+                    <input type="submit">
+                </form>
+            </div>
+            <div class="modal-footer">
+            </div>
+        </div>
+
+        <!--<div class="modal-dialog modal-lg"></div>-->
+
+        <script src="https://code.jquery.com/jquery-3.7.1.js" integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4=" crossorigin="anonymous"></script>
+        <script>
+//                                function ShowModalEditar() {
+//                                    var modal = $("#modalEdicionUsuario");
+//
+//                                    if (modal.css("display") === "none") {
+//                                        modal.css("display", "block");
+//                                    } else {
+//                                        modal.css("display", "none");
+//                                    }
+//                                }
+
+                                function ShowModalEditar() {
+                                    $("#modalEdicionUsuario").toggle(300);
+                                }
+                                
+
+
+
+        </script>
+
     </body>
 </html>

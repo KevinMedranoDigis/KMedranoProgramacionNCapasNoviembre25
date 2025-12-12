@@ -59,9 +59,8 @@ public class AlumnoJPADAOImplementation implements IAlumnoJPA {
             alumno.Direcciones.get(0).Alumno = new Alumno();
             alumno.Direcciones.get(0).Alumno.setIdAlumno(alumno.getIdAlumno());
             entityManager.persist(alumno.Direcciones.get(0));
-            
-            //guardar la direccion
 
+            //guardar la direccion
         } catch (Exception ex) {
             result.Correct = false;
             result.ErrorMessage = ex.getLocalizedMessage();
@@ -73,14 +72,26 @@ public class AlumnoJPADAOImplementation implements IAlumnoJPA {
 
     //Transactional
     //override
-    public Result Update(KMedrano.ProgramacionNCapasNoviembre25.ML.Alumno alumnoML){
-         
-    //verificar si existe en la base de datos
-   Alumno alumnoDb = entityManager.find(Alumno.class, alumnoML.getIdAlumno());
-    
-    //mapear el ML Alumno a un JPA Alumno
-    //  hacer merge
-    
-    return new Result();
+    public Result Update(KMedrano.ProgramacionNCapasNoviembre25.ML.Alumno alumnoML) {
+
+        //verificar si existe en la base de datos
+        Alumno alumnoBD = entityManager.find(Alumno.class, alumnoML.getIdAlumno());
+
+        if (alumnoBD != null) {
+
+            ModelMapper modelMapper = new ModelMapper();
+
+            Alumno alumnoJPA = modelMapper.map(alumnoML, Alumno.class);
+
+            alumnoJPA.Direcciones = alumnoBD.Direcciones;
+
+            System.out.println(alumnoJPA);
+            //merge
+
+        }
+        //mapear el ML Alumno a un JPA Alumno
+        //  hacer merge
+
+        return new Result();
     }
 }
