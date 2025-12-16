@@ -2,6 +2,7 @@ package KMedrano.ProgramacionNCapasNoviembre25.Controller;
 
 import KMedrano.ProgramacionNCapasNoviembre25.DAO.AlumnoDAOIMplementation;
 import KMedrano.ProgramacionNCapasNoviembre25.DAO.AlumnoJPADAOImplementation;
+import KMedrano.ProgramacionNCapasNoviembre25.DAO.DireccionJPADAOImplementation;
 import KMedrano.ProgramacionNCapasNoviembre25.DAO.EstadoDAOImplementation;
 import KMedrano.ProgramacionNCapasNoviembre25.DAO.MunicipioDAOImplemetation;
 import KMedrano.ProgramacionNCapasNoviembre25.DAO.PaisDAOImplementation;
@@ -50,7 +51,7 @@ public class AlumnoController {
 
     @Autowired // Inyección de dependencias (field injection)
     private AlumnoDAOIMplementation alumnoDAOImplementation;
-    
+
     @Autowired
     private AlumnoJPADAOImplementation alumnoJPADAOImplementation;
 
@@ -65,16 +66,19 @@ public class AlumnoController {
 
     @Autowired
     private MunicipioDAOImplemetation municipioDAOImplemetation;
+    
+    @Autowired
+    private DireccionJPADAOImplementation direccionJPADAOImplementation;
 
     @Autowired
     private ValidationService validatorService;
-    
+
     @GetMapping // responder a interacciones de usuario
     public String GetAll(Model model) {
 
         Result result = alumnoJPADAOImplementation.GetAll();
-        
-       // Result result = alumnoDAOImplementation.GetAll();
+
+        // Result result = alumnoDAOImplementation.GetAll();
         Result resultSemestres = semestreDAOImplementation.GetAll();
         //model -> me permite cargar información desde el backend en la parte del front
         model.addAttribute("Alumnos", result.Objects);
@@ -121,7 +125,10 @@ public class AlumnoController {
         Result result = alumnoDAOImplementation.GetByIdDirecciones(IdAlumno);
         Result resultSemestres = semestreDAOImplementation.GetAll();
         model.addAttribute("Alumno", result.Object);
-        model.addAttribute("Semestres",resultSemestres.Objects); 
+        model.addAttribute("Semestres", resultSemestres.Objects);
+        model.addAttribute("Paises", paisDAOImplementation.GetAll().Objects);
+        model.addAttribute("Direccion", new Direccion());
+            
 
         return "AlumnoDetail";
     }
@@ -198,19 +205,18 @@ public class AlumnoController {
 
         if (alumno.getIdAlumno() == 0) {
 
-        ModelMapper modelMapper = new ModelMapper();
-        
-        KMedrano.ProgramacionNCapasNoviembre25.JPA.Alumno alumnoJPA = modelMapper.map(alumno, KMedrano.ProgramacionNCapasNoviembre25.JPA.Alumno.class);
-        
-        Result resultadd = alumnoJPADAOImplementation.Add(alumnoJPA);
-        
+            ModelMapper modelMapper = new ModelMapper();
+
+            KMedrano.ProgramacionNCapasNoviembre25.JPA.Alumno alumnoJPA = modelMapper.map(alumno, KMedrano.ProgramacionNCapasNoviembre25.JPA.Alumno.class);
+
+            Result resultadd = alumnoJPADAOImplementation.Add(alumnoJPA);
+
             System.out.println("Estoy agregando alumno");
         } else {
             if (alumno.Direcciones.get(0).getIdDireccion() == -1) {
 
-                 Result result = alumnoJPADAOImplementation.Update(alumno);
-                 
-                 
+                Result result = alumnoJPADAOImplementation.Update(alumno);
+
                 System.out.println("Estoy actualizando alumno");
             } else if (alumno.Direcciones.get(0).getIdDireccion() == 0) {
 
@@ -267,7 +273,7 @@ public class AlumnoController {
 
         List<Alumno> alumnos = new ArrayList<>();
 
-        try ( BufferedReader bufferedReader = new BufferedReader(new FileReader(archivo));) {
+        try (BufferedReader bufferedReader = new BufferedReader(new FileReader(archivo));) {
 
             bufferedReader.readLine();
             String line = "";
@@ -322,25 +328,23 @@ public class AlumnoController {
         List<ErrorCarga> erroresCarga = new ArrayList<>();
         int LineaError = 0;
 
-      
-        
         for (Alumno alumno : alumnos) {
-            
-              List<ObjectError> errors = new ArrayList<>();
-            
+
+            List<ObjectError> errors = new ArrayList<>();
+
             LineaError++;
             BindingResult bindingResultAlumno = validatorService.validateObjects(alumno);
-            if(bindingResultAlumno.hasErrors()){
+            if (bindingResultAlumno.hasErrors()) {
                 errors.addAll(bindingResultAlumno.getAllErrors());
             }
-            
-            if(alumno.Semestre != null){
+
+            if (alumno.Semestre != null) {
                 BindingResult bindingSemestre = validatorService.validateObjects(alumno.Semestre);
-                if(bindingSemestre.hasErrors()){
+                if (bindingSemestre.hasErrors()) {
                     errors.addAll(bindingSemestre.getAllErrors());
                 }
             }
-             
+
             for (ObjectError error : errors) {
                 FieldError fieldError = (FieldError) error;
                 ErrorCarga errorCarga = new ErrorCarga();
@@ -353,39 +357,48 @@ public class AlumnoController {
         }
         return erroresCarga;
     }
-    
+
     @GetMapping("/CargaMasiva/procesar")
-    public String ProcesarArchivo(HttpSession sesion){
-     String path =   sesion.getAttribute("archivoCargaMasiva").toString();
+    public String ProcesarArchivo(HttpSession sesion) {
+        String path = sesion.getAttribute("archivoCargaMasiva").toString();
         System.out.println(path);
-       
-      // alumnos =  LecturaArchivoExcel(new File(path));
-       sesion.removeAttribute("archivoCargaMasiva");
+
+        // alumnos =  LecturaArchivoExcel(new File(path));
+        sesion.removeAttribute("archivoCargaMasiva");
         //Proceso de guardado
         //leer el 
         File archivo = new File(path);
         String extension = archivo.getName();
-        
+
         //validacion de extension (xlsx o txt)
-        
-        
         return "AlumnoIndex";
     }
-    
+
     @PostMapping("/GetAllDinamico")
-    public String GetAllDinamico(@ModelAttribute Alumno alumno, Model model){
-        
+    public String GetAllDinamico(@ModelAttribute Alumno alumno, Model model) {
+
         model.addAttribute("alumnoBusqueda", new Alumno());
         model.addAttribute("semestres", semestreDAOImplementation.GetAll().Objects);
 //        model.addAttribute("Alumnos", alumnoDAOImplementation.GetAllDinamico(alumno).Objects);
-        
-        ModelMapper modelMapper = new ModelMapper();
-       KMedrano.ProgramacionNCapasNoviembre25.JPA.Alumno alumnoJPA = modelMapper.map(alumno, KMedrano.ProgramacionNCapasNoviembre25.JPA.Alumno.class);
 
-        //model.addAttribute("Alumnos", alumnoJPADAOImplementation.GetAllDinamico(alumnoJPA).Objects);
-        
+
+        ModelMapper modelMapper = new ModelMapper();
+        KMedrano.ProgramacionNCapasNoviembre25.JPA.Alumno alumnoJPA = modelMapper.map(alumno, KMedrano.ProgramacionNCapasNoviembre25.JPA.Alumno.class);
+
+        model.addAttribute("Alumnos", alumnoJPADAOImplementation.GetAllDinamico(alumnoJPA).Objects);
         return "AlumnoIndex";
     }
-    
-    
+
+    @GetMapping("/GetDireccionById")
+    @ResponseBody
+    public Result GetByIdDireccion(@RequestParam int IdDireccion) {
+        Result result = new Result();
+
+         
+        result = direccionJPADAOImplementation.GetById(IdDireccion);
+        
+        
+        return result;
+    }
+
 }

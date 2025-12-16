@@ -142,6 +142,7 @@ public class AlumnoDAOIMplementation implements IAlumno {
                     
                     do {
                         Direccion direccion = new KMedrano.ProgramacionNCapasNoviembre25.ML.Direccion();
+                        direccion.setIdDireccion(resultSet.getInt("IdDireccion"));
                         direccion.setCalle(resultSet.getString("Calle"));
                         direccion.setNumeroInterior(resultSet.getString("NumeroInterior"));
                         direccion.Colonia = new Colonia();

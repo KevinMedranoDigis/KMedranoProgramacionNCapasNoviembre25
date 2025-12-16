@@ -18,7 +18,7 @@
                             <p class="card-text" th:text="|Usuario: |"></p>
                             <p class="card-text" th:text="|Email: |"></p>                            
                             <!--<a class="btn btn-primary col-12" th:href="@{/alumno/formEditable?IdAlumno=}+${Alumno.IdAlumno}">Editar Información</a>-->
-                            <a class="btn btn-primary col-12" onclick="ShowModalEditar()" >Editar Información</a>
+                            <a class="btn btn-primary col-12"  data-bs-toggle="modal" data-bs-target="#modalAlumno" >Editar Información</a>
                         </div>
                     </div>
                 </div>
@@ -31,7 +31,7 @@
 
 
                             <!--<a class="btn btn-secondary mt-2 col-12" th:href="@{/alumno/formEditable?IdAlumno=}+${Alumno.IdAlumno}+'&IdDireccion=0'">Agregar Dirección</a>-->
-                            <button class="btn btn-secondary mt-2 col-12" onclick="modalDireccion(0)">Agregar Dirección</button>
+                            <button class="btn btn-secondary mt-2 col-12" data-bs-toggle="modal" data-bs-target="#modalDireccion" onclick="modalAgregarDireccion()">Agregar Dirección</button>
 
                             <br/><br/>
 
@@ -47,7 +47,10 @@
                                         <td th:text="${direccion.Calle}"></td>
                                         <td>
                                             <!--<a class="btn btn-warning btn-sm" th:href="@{/alumno/formEditable?IdAlumno=}+${Alumno.IdAlumno}+'&IdDireccion='+${direccion.IdDireccion}">Editar</a>-->
-                                            <button class="btn btn-warning btn-sm" th:onclick="|modalDireccion(${direccion.IdDireccion})|">Editar</button>
+                                            <!--                                            <button class="btn btn-warning btn-sm" th:onclick="|modalDireccion(${direccion.IdDireccion})|">Editar</button>-->
+                                            <button type="button" class="btn btn-warning btn-sm" data-bs-toggle="modal" data-bs-target="#modalDireccion"  th:onclick="|modalDireccion(${direccion.IdDireccion})|">
+                                                Editar
+                                            </button>
                                             <a class="btn btn-danger btn-sm">Borrar</a>
                                         </td>
                                     </tr>
@@ -60,88 +63,110 @@
         </div>
 
 
-        <!-- Modal -->
-        <div class="modal" id="modalEdicionUsuario" aria-labelledby="modalEdicionUsuarioLabel" aria-hidden="true">
-            <div class="modal-dialog modal-lg">
+        <div class="modal fade" id="modalAlumno" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
                 <div class="modal-content">
-
-                    <!-- Header -->
                     <div class="modal-header">
-                        <h5 class="modal-title" id="modalEdicionUsuarioLabel">Editar Alumno</h5>
-                        <button type="button" class="btn-close" onclick="ShowModalEditar()" aria-label="Cerrar"></button>
+                        <h1 class="modal-title fs-5" id="exampleModalLabel">Modal Direccion</h1>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
-
-                    <!-- Body -->
                     <div class="modal-body">
-                        <form th:object="${Alumno}" method="post"   >
+                        <div class="container">
+                            <form th:object="${Alumno}" method="post"   >
 
-                            <div class="mb-3">
-                                <label for="nombre" class="form-label">Nombre</label>
-                                <input type="text" id="nombre" class="form-control" placeholder="Nombre" th:field="*{Nombre}" required>
-                            </div>
+                                <div class="mb-3">
+                                    <label for="nombre" class="form-label">Nombre</label>
+                                    <input type="text" id="nombre" class="form-control" placeholder="Nombre" th:field="*{Nombre}" required>
+                                </div>
 
-                            <div class="mb-3">
-                                <label for="apellidoPaterno" class="form-label">Apellido Paterno</label>
-                                <input type="text" id="apellidoPaterno" class="form-control" placeholder="Apellido Paterno" th:field="*{ApellidoPaterno}" required>
-                            </div>
+                                <div class="mb-3">
+                                    <label for="apellidoPaterno" class="form-label">Apellido Paterno</label>
+                                    <input type="text" id="apellidoPaterno" class="form-control" placeholder="Apellido Paterno" th:field="*{ApellidoPaterno}" required>
+                                </div>
 
-                            <div class="mb-3">
-                                <label for="apellidoMaterno" class="form-label">Apellido Materno</label>
-                                <input type="text" id="apellidoMaterno" class="form-control" placeholder="Apellido Materno" th:field="*{ApellidoMaterno}">
-                            </div>
+                                <div class="mb-3">
+                                    <label for="apellidoMaterno" class="form-label">Apellido Materno</label>
+                                    <input type="text" id="apellidoMaterno" class="form-control" placeholder="Apellido Materno" th:field="*{ApellidoMaterno}">
+                                </div>
 
-                            <div class="mb-3">
-                                <label for="email" class="form-label">Correo electrónico</label>
-                                <input type="email" id="email" class="form-control" placeholder="Email" th:field="*{Email}" required>
-                            </div>
+                                <div class="mb-3">
+                                    <label for="email" class="form-label">Correo electrónico</label>
+                                    <input type="email" id="email" class="form-control" placeholder="Email" th:field="*{Email}" required>
+                                </div>
 
-                            <div class="mb-3">
-                                <label for="password" class="form-label">Contraseña</label>
-                                <input type="password" id="password" class="form-control" placeholder="Password" th:field="*{Password}" required>
-                            </div>
+                                <div class="mb-3">
+                                    <label for="password" class="form-label">Contraseña</label>
+                                    <input type="password" id="password" class="form-control" placeholder="Password" th:field="*{Password}" required>
+                                </div>
 
-                            <div class="mb-3">
-                                <label for="semestre" class="form-label">Semestre</label>
-                                <select id="semestre" class="form-select" th:field="*{Semestre.IdSemestre}" required>
-                                    <option value=0>Selecciona un Semestre</option>
-                                    <option th:each="semestre : ${Semestres}" th:text="${semestre.Nombre}" th:value="${semestre.IdSemestre}"></option>
-                                </select>
-                            </div>
+                                <div class="mb-3">
+                                    <label for="semestre" class="form-label">Semestre</label>
+                                    <select id="semestre" class="form-select" th:field="*{Semestre.IdSemestre}" required>
+                                        <option value=0>Selecciona un Semestre</option>
+                                        <option th:each="semestre : ${Semestres}" th:text="${semestre.Nombre}" th:value="${semestre.IdSemestre}"></option>
+                                    </select>
+                                </div>
 
-                        </form>
+                            </form>
+                        </div>
                     </div>
-
-                    <!-- Footer -->
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" onclick="ShowModalEditar()">Cancelar</button>
-                        <button type="submit" class="btn btn-primary">Guardar cambios</button>
+                        <!--                                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                                                        <button type="button" class="btn btn-primary">Save changes</button>-->
                     </div>
-
                 </div>
             </div>
         </div>
 
 
-        <!--agrega direccion / edita direccion-->
-        <div class="modal hide" id="modaDireccion" > 
-            <div class="modal-header">
-                <a class="close" data-dismiss="modal">×</a>
-                <h3>Add Contact</h3>
-                <div id="errors_notification">
+
+        <div class="modal fade" id="modalDireccion" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h1 class="modal-title fs-5" id="exampleModalLabel">Modal Direccion</h1>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="container">
+                            <form th:object ="${Direccion}" th:action="@{/usaurio/${IdUsuario}/direccion}">
+                                <input type="hidden" id="inptIdDireccion" th:field="${Direccion.IdDireccion}">
+
+                                <div class="row m-2">
+                                    <input type="text" placeholder="Calle"  class="form-control col m-1" th:field="${Direccion.Calle}" id="intpCalle">
+                                    <input type="text" placeholder="Numero Interior" class="form-control col m-1" th:field="${Direccion.NumeroInterior}" id="intpNumeroInterior">
+                                </div>
+                                <div class="row m-2">
+                                    <input type="text" placeholder="Numero Exterior" class="form-control col m-1" th:field="${Direccion.NumeroExterior}" id="intpNumeroExterior">
+                                </div>
+                                <div class="row m-2">
+                                    <label for="ddlpais" class="form-label fw-bold">Pais</label>
+                                    <select id="ddlpais" class="form-select col-4" aria-label="Default select example" >
+                                        <option value=0 selected>Selecciona un pais</option>
+                                        <option th:each="pais : ${Paises}" th:text="${pais.Nombre}"  th:value="${pais.IdPais}"></option>
+                                    </select>
+                                </div>
+                                <div class="row m-2">
+                                    <label for="ddlcolonia" class="form-label fw-bold">Pais</label>
+                                    <input type="text" placeholder="Colonia" class="form-control"></input>
+                                </div>
+                                </br>
+                                <div class="row">
+                                    <div class="col-3">
+                                        <button type="submit" class="btn btn-primary">Enviar</button>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <!--                                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                                                        <button type="button" class="btn btn-primary">Save changes</button>-->
+                    </div>
                 </div>
-            </div>
-            <div class="modal-body">
-                <form th:object ="${Direccion}" th:action="@{/usaurio/${IdUsuario}/direccion}">
-                    <input type="hidden" >
-                    <input type="text" placeholder="Nombre" th:field="${Alumno.Nombre}">
-                    <input type="submit">
-                </form>
-            </div>
-            <div class="modal-footer">
             </div>
         </div>
 
-        <!--<div class="modal-dialog modal-lg"></div>-->
 
         <script src="https://code.jquery.com/jquery-3.7.1.js" integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4=" crossorigin="anonymous"></script>
         <script>
@@ -156,10 +181,55 @@
 //                                }
 
                                 function ShowModalEditar() {
-                                    $("#modalEdicionUsuario").toggle(300);
+                                $("#modalEdicionUsuario").toggle(300);
                                 }
-                                
 
+                                function modalDireccion(iddireccion) {
+
+                                $("#modalDireccion").toggle(300);
+                                $.ajax({
+                                url: '/alumno/GetDireccionById?IdDireccion=' + iddireccion,
+                                        type: 'GET', type: 'GET',
+                                        dataType: 'json', (data, textStatus, jqXHR) => {
+                                $.each(data.Object.direcciones, (i, direccion) => {
+                                if (direccion.idDireccion == idDireccion){
+                                console.log(direccion.calle);
+//                                                           $('#Dircalle, #noExterior, #noInterior, #idCol').val('')
+                                $("#Dircalle").val(direccion.calle);
+                                $("#noExterior").val(direccion.numeroExterior);
+                                $("#noInterior").val(direccion.numeroInterior);
+                                $("#idCol").val(direccion.idColonia);
+                                }
+                                });
+                                }
+                                success: function (result) {
+                                if (result.Correct) {
+                                $('#inptIdDireccion, (data, textStatus, jqXHR) => {
+                                        $.each(data.Object.direcciones, (i, direccion) => {
+                                        if (direccion.idDireccion == idDireccion){
+                                        console.log(direccion.calle);
+//                                                           $('#Dircalle, #noExterior, #noInterior, #idCol').val('')
+                                        $("#Dircalle").val(direccion.calle);
+                                        $("#noExterior").val(direccion.numeroExterior);
+                                        $("#noInterior").val(direccion.numeroInterior);
+                                        $("#idCol").val(direccion.idColonia);
+                                        }
+                                        });
+                                }('#intpCalle').val('');
+                                        $('#inptIdDireccion').val(result.Object.idDireccion);
+                                $('#intpCalle').val(result.Object.calle);
+                                }
+                                }, error: function (result) {
+
+                                }
+                                });
+                                }
+
+                                function modalAgregarDireccion() {
+                                $('#inptIdDireccion').val('');
+                                $('#intpCalle').val('');
+                                $('modalDireccion').toggle(300);
+                                }
 
 
         </script>

@@ -94,4 +94,35 @@ public class AlumnoJPADAOImplementation implements IAlumnoJPA {
 
         return new Result();
     }
+
+    @Override
+    public Result GetAllDinamico(Alumno alumno) {
+        Result result = new Result();
+        
+        StringBuilder query = new StringBuilder("FROM Alumno WHERE UPPER(Nombre) LIKE UPPER(:nombre) AND UPPER(ApellidoPaterno) LIKE UPPER(:apellidoPaterno)");
+        
+        if(alumno.Semestre.getIdSemestre() != 0){
+            query.append(" AND Semestre.IdSemestre = :idSemestre");
+        }
+        
+        
+        TypedQuery<Alumno> queryAlumnos = entityManager.createQuery(query.toString(), Alumno.class);
+        
+        queryAlumnos.setParameter("nombre", "%"+alumno.getNombre()+"%");
+        queryAlumnos.setParameter("apellidoPaterno", "%"+alumno.getApellidoPaterno()+"%");
+        
+        
+        if(alumno.Semestre.getIdSemestre() != 0){
+            queryAlumnos.setParameter("idSemestre",alumno.Semestre.getIdSemestre());
+        }
+
+        
+        List<Alumno> alumnos = queryAlumnos.getResultList();
+        result.Objects = new ArrayList<>();
+        
+        for (Alumno item : alumnos) {
+            result.Objects.add(item);
+        }
+        return result;
+    }
 }
