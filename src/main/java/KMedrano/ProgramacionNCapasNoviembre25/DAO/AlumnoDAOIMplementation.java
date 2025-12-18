@@ -92,7 +92,7 @@ public class AlumnoDAOIMplementation implements IAlumno {
 
         try {
 
-            result.Correct = jdbcTemplate.execute("{CALL AlumnoDireccionAdd(?,?,?,?,?,?,?,?,?)}", (CallableStatementCallback<Boolean>) callableStatement -> {
+            result.Correct = jdbcTemplate.execute("{CALL AlumnoDireccionAdd(?,?,?,?,?,?,?,?,?,?)}", (CallableStatementCallback<Boolean>) callableStatement -> {
 
                 callableStatement.setString(1, alumno.getNombre());
                 callableStatement.setString(2, alumno.getApellidoPaterno());

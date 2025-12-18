@@ -42,6 +42,9 @@ public class Alumno {
     @Column(name = "password")
     private String Password;
     
+    @Column(name = "imagen")
+    private String Imagen;
+    
     @ManyToOne
     @JoinColumn(name = "idsemestre")
     public Semestre Semestre; // FK
@@ -112,6 +115,16 @@ public class Alumno {
     public void setDirecciones(List<Direccion> Direcciones) {
         this.Direcciones = Direcciones;
     }
+
+    public String getImagen() {
+        return Imagen;
+    }
+
+    public void setImagen(String Imagen) {
+        this.Imagen = Imagen;
+    }
+    
+    
     
     
         

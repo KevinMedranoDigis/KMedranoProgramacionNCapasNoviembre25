@@ -21,7 +21,7 @@
     <body >
         <div class="container">
 
-            <form method="post" th:object="${Alumno}" th:action="@{/alumno/formEditable}">
+            <form method="post" th:object="${Alumno}" th:action="@{/alumno/formEditable}" enctype="multipart/form-data">
 
                 <div class="row" th:if="${(Alumno.IdAlumno == 0 && Alumno.Direcciones[0].IdDireccion == 0) || (Alumno.IdAlumno != 0 && Alumno.Direcciones[0].IdDireccion == -1)}">
                     <div class="col-md-4 text-center d-flex flex-column align-items-center">

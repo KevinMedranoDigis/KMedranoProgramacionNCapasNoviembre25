@@ -25,6 +25,7 @@ public class Alumno {
     @Pattern(regexp = "", message = "Ingresa un correo valido")
     private String Email;
     private String Password;
+    private String Imagen;
     public Semestre Semestre;
     public List<Direccion> Direcciones;
     
@@ -96,7 +97,13 @@ public class Alumno {
     public void setDirecciones(List<Direccion> Direcciones) {
         this.Direcciones = Direcciones;
     }
-    
-    
+
+    public String getImagen() {
+        return Imagen;
+    }
+
+    public void setImagen(String Imagen) {
+        this.Imagen = Imagen;
+    }
     
 }
