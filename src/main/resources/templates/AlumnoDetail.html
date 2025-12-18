@@ -8,18 +8,19 @@
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
     </head>
     <body>
+        <!--<img th:src="${Alumno.Imagen != null ? 'data:image/png;base64,' + Alumno.Imagen : '/images/default.png'}" alt="Imagen del alumno" />-->
         <div class="container mt-5">
             <div class="row">
                 <div class="col-md-4">
                     <div class="card">
-                        <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTNT31I-b-Jdf8bjPM-mm-V1qCpb-oudRLvtw&s" style="max-height: 250px; object-fit: contain" class="card-img-top" alt="Imagen del usuario">
-                        <input type="file" class="formc-control">
+                        <!--<img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTNT31I-b-Jdf8bjPM-mm-V1qCpb-oudRLvtw&s" style="max-height: 250px; object-fit: contain" class="card-img-top" alt="Imagen del usuario">-->
+                        <img th:src="${Alumno.Imagen != null ? 'data:image/*;base64,' + Alumno.Imagen : 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTNT31I-b-Jdf8bjPM-mm-V1qCpb-oudRLvtw&s'}">
                         <div class="card-body">
                             <h3 th:text="|${Alumno.Nombre} ${Alumno.ApellidoPaterno}|"></h3>
                             <p class="card-text" th:text="|Usuario: |"></p>
                             <p class="card-text" th:text="|Email: |"></p>                            
-                            <!--<a class="btn btn-primary col-12" th:href="@{/alumno/formEditable?IdAlumno=}+${Alumno.IdAlumno}">Editar Información</a>-->
-                            <a class="btn btn-primary col-12"  data-bs-toggle="modal" data-bs-target="#modalAlumno" >Editar Información</a>
+                            <a class="btn btn-primary col-12" th:href="@{/alumno/formEditable?IdAlumno=}+${Alumno.IdAlumno}">Editar Información</a>
+                            <!--                            <a class="btn btn-primary col-12"  data-bs-toggle="modal" data-bs-target="#modalAlumno" >Editar Información</a>-->
                         </div>
                     </div>
                 </div>
@@ -217,7 +218,7 @@
                                         }
                                         });
                                 }('#intpCalle').val('');
-                                        $('#inptIdDireccion').val(result.Object.idDireccion);
+                                $('#inptIdDireccion').val(result.Object.idDireccion);
                                 $('#intpCalle').val(result.Object.calle);
                                 }
                                 }, error: function (result) {

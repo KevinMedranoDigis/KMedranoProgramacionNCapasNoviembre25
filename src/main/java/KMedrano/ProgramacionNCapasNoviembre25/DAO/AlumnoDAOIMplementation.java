@@ -132,7 +132,9 @@ public class AlumnoDAOIMplementation implements IAlumno {
 
             if (resultSet.next()) {
                 Alumno alumno = new Alumno();
+                alumno.setIdAlumno(resultSet.getInt("IdAlumno"));
                 alumno.setNombre(resultSet.getString("Nombre"));
+                alumno.setImagen(resultSet.getString("Imagen"));
 
                 int idDireccion = resultSet.getInt("IdDireccion"); // null -> 0
                
@@ -184,6 +186,7 @@ public class AlumnoDAOIMplementation implements IAlumno {
                     alumno.setApellidoMaterno(resultSet.getString("ApellidoMaterno"));
                     alumno.setEmail(resultSet.getString("Email"));
                     alumno.setPassword(resultSet.getString("Password"));
+                    alumno.setImagen(resultSet.getString("Imagen"));
                     alumno.Semestre = new Semestre();
 
                     alumno.Semestre.setIdSemestre(resultSet.getInt("IdSemestre"));
