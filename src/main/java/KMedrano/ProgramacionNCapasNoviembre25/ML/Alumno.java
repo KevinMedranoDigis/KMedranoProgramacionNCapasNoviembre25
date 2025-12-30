@@ -34,6 +34,7 @@ public class Alumno {
 //        this.Nombre = alumnoJPA.getNombre();
 //    }
 
+    
     public int getIdAlumno() {
         return IdAlumno;
     }

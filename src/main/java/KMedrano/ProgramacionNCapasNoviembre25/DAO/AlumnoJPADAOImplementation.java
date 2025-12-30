@@ -60,6 +60,8 @@ public class AlumnoJPADAOImplementation implements IAlumnoJPA {
             alumno.Direcciones.get(0).Alumno.setIdAlumno(alumno.getIdAlumno());
             entityManager.persist(alumno.Direcciones.get(0));
             
+            result.Correct = true;
+            
             //guardar la direccion
         } catch (Exception ex) {
             result.Correct = false;
