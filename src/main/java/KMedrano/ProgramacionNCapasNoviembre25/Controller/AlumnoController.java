@@ -268,7 +268,7 @@ public class AlumnoController {
 
         archivo.transferTo(new File(rutaabsoluta));
         List<Alumno> alumnos = new ArrayList<>();
-
+        
         if (extencion.equals("txt")) {
             //lectura de un archivo txt
             alumnos = LecturaArchivo(new File(rutaabsoluta));

@@ -6,4 +6,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface IAlumnoJPARepository extends JpaRepository<Alumno, Integer>{
     
+    Alumno findByEmail(String Email); //Convencion de nombres
 }

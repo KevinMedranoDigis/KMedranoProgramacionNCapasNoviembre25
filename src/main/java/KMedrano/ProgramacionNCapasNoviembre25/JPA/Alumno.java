@@ -37,7 +37,7 @@ public class Alumno {
     private String ApellidoMaterno;
     
     @Column(name = "email")
-    private String Email;
+    private String email;
      
     @Column(name = "password")
     private String Password;
@@ -85,11 +85,11 @@ public class Alumno {
     }
 
     public String getEmail() {
-        return Email;
+        return email;
     }
 
-    public void setEmail(String Email) {
-        this.Email = Email;
+    public void setEmail(String email) {
+        this.email = email;
     }
 
     public String getPassword() {

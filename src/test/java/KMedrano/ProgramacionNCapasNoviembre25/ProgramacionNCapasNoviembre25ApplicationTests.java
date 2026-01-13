@@ -1,5 +1,6 @@
 package KMedrano.ProgramacionNCapasNoviembre25;
 
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
@@ -8,6 +9,8 @@ class ProgramacionNCapasNoviembre25ApplicationTests {
 
 	@Test
 	void contextLoads() {
+                     System.out.println("hola");
+                     
 	}
 
 }
