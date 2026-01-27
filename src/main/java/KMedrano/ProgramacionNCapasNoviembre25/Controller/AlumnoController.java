@@ -22,6 +22,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -105,10 +106,12 @@ public class AlumnoController {
     }
 
     @PostMapping("add")
-    public String Add(@Valid @ModelAttribute("Alumno") Alumno alumno, BindingResult bindingResult, Model model, @RequestParam("imagenFile") MultipartFile imagen) {
+    public String Add(@Valid @ModelAttribute("Alumno") Alumno alumno, BindingResult bindingResult, Model model, @RequestParam("imagenFile") MultipartFile imagen) throws IOException {
 
         if (imagen != null) {
-
+            byte[] imagenByte =   Base64.getEncoder().encode(imagen.getBytes());
+            String imagenString = new String(imagenByte, StandardCharsets.UTF_8);
+            alumno.setImagen(imagenString);
         }
 
         if (bindingResult.hasErrors()) {

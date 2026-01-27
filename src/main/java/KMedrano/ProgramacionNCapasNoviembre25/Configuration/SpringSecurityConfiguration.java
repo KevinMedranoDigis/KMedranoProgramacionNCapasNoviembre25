@@ -12,30 +12,31 @@ import org.springframework.security.web.SecurityFilterChain;
 @Configuration
 @EnableWebSecurity
 public class SpringSecurityConfiguration {
-    
+
     private UserDetailsJPAService userDetailsJPAService;
-    
-    public SpringSecurityConfiguration(UserDetailsJPAService userDetailsJPAService){
+
+    public SpringSecurityConfiguration(UserDetailsJPAService userDetailsJPAService) {
         this.userDetailsJPAService = userDetailsJPAService;
     }
-    
+
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception{
-        
-        http.authorizeHttpRequests( config -> config.requestMatchers("/alumno/**")
+    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+
+        http.authorizeHttpRequests(config -> config.
+                requestMatchers("/alumno/**")
                 .hasAnyRole("1er Semestre")
+                .requestMatchers("/alumno/cargaMasiva").hasAnyRole("Admin", "User")
+                .requestMatchers("/alumno/CargaMasiva/Procesar").hasAnyRole("Admin")
                 .anyRequest().authenticated()
-                
         ).formLogin(form -> form.defaultSuccessUrl("/alumno", true)
         ).userDetailsService(userDetailsJPAService);
-        
+
         return http.build();
     }
-    
+
     @Bean
-    public PasswordEncoder passwordEncoder(){
+    public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
-    
-    
+
 }
